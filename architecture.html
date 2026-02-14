@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BarqAdl — Architecture Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06070b;
+  --surface: #0c0e16;
+  --surface-2: #12151f;
+  --surface-3: #1a1d2b;
+  --border: #1e2236;
+  --border-hi: #2d3250;
+  --gold: #d4a015;
+  --gold-dim: rgba(212,160,21,0.10);
+  --gold-glow: rgba(212,160,21,0.06);
+  --cyan: #06b6d4;
+  --cyan-dim: rgba(6,182,212,0.10);
+  --emerald: #10b981;
+  --emerald-dim: rgba(16,185,129,0.10);
+  --rose: #f43f5e;
+  --rose-dim: rgba(244,63,94,0.10);
+  --violet: #8b5cf6;
+  --violet-dim: rgba(139,92,246,0.10);
+  --sky: #38bdf8;
+  --sky-dim: rgba(56,189,248,0.10);
+  --orange: #f97316;
+  --orange-dim: rgba(249,115,22,0.10);
+  --text: #e2e5ef;
+  --text-2: #9198b0;
+  --text-3: #5c6380;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',system-ui,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.mono{font-family:'Geist Mono',monospace}
+
+.grain{position:fixed;inset:0;opacity:.02;pointer-events:none;z-index:999;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.wrap{max-width:1080px;margin:0 auto;padding:48px 24px 64px}
+
+/* ─── HEADER ─── */
+.hero{text-align:center;margin-bottom:64px;position:relative}
+.hero::before{content:'';position:absolute;top:-140px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,var(--gold-glow) 0%,transparent 65%);pointer-events:none}
+
+.logo-ar{font-size:42px;font-weight:700;letter-spacing:-1px;margin-bottom:2px}
+.logo-ar span{background:linear-gradient(135deg,#fff 20%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo-sub{font-size:14px;color:var(--gold);font-weight:500;letter-spacing:.5px;margin-bottom:8px}
+.logo-tag{font-size:15px;color:var(--text-2);max-width:520px;margin:0 auto;font-weight:400;line-height:1.6}
+
+.pill{display:inline-block;font-family:'Geist Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);background:var(--gold-dim);border:1px solid rgba(212,160,21,.2);padding:5px 14px;border-radius:20px;margin-bottom:20px}
+
+/* ─── SECTIONS ─── */
+.sec{margin-bottom:56px}
+.sec-tag{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:3px;text-transform:uppercase;color:var(--text-3);margin-bottom:6px}
+.sec-title{font-size:24px;font-weight:700;color:#fff;margin-bottom:4px;letter-spacing:-.3px}
+.sec-desc{font-size:14px;color:var(--text-2);margin-bottom:22px;max-width:680px;line-height:1.6}
+
+/* ─── TECH STACK BANNER ─── */
+.stack-banner{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--border);border-radius:14px;overflow:hidden;border:1px solid var(--border);margin-bottom:56px}
+.stack-item{background:var(--surface);padding:22px 20px;text-align:center}
+.stack-item .s-icon{font-size:28px;margin-bottom:8px}
+.stack-item h3{font-size:14px;font-weight:700;color:#fff;margin-bottom:2px}
+.stack-item .s-role{font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.stack-item .s-role.c1{color:var(--cyan)}
+.stack-item .s-role.c2{color:var(--emerald)}
+.stack-item .s-role.c3{color:var(--gold)}
+.stack-item .s-role.c4{color:var(--violet)}
+.stack-item p{font-size:11.5px;color:var(--text-3);line-height:1.4}
+
+/* ─── FLOW NODES ─── */
+.flow{display:flex;flex-direction:column}
+.flow-node{display:grid;grid-template-columns:52px 1fr;gap:16px;position:relative}
+
+.node-dot{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;position:relative;z-index:2;box-shadow:0 0 24px rgba(0,0,0,.4)}
+.flow-node:not(:last-child) .node-dot::after{content:'';position:absolute;top:44px;left:50%;transform:translateX(-50%);width:1.5px;height:calc(100% + 14px);z-index:1}
+
+.node-dot.gold{background:var(--gold-dim);border:1.5px solid var(--gold);color:var(--gold)}
+.node-dot.gold::after{background:linear-gradient(to bottom,var(--gold),var(--border))}
+.node-dot.cyan{background:var(--cyan-dim);border:1.5px solid var(--cyan);color:var(--cyan)}
+.node-dot.cyan::after{background:linear-gradient(to bottom,var(--cyan),var(--border))}
+.node-dot.emerald{background:var(--emerald-dim);border:1.5px solid var(--emerald);color:var(--emerald)}
+.node-dot.emerald::after{background:linear-gradient(to bottom,var(--emerald),var(--border))}
+.node-dot.violet{background:var(--violet-dim);border:1.5px solid var(--violet);color:var(--violet)}
+.node-dot.violet::after{background:linear-gradient(to bottom,var(--violet),var(--border))}
+.node-dot.rose{background:var(--rose-dim);border:1.5px solid var(--rose);color:var(--rose)}
+.node-dot.rose::after{background:linear-gradient(to bottom,var(--rose),var(--border))}
+.node-dot.sky{background:var(--sky-dim);border:1.5px solid var(--sky);color:var(--sky)}
+.node-dot.sky::after{background:linear-gradient(to bottom,var(--sky),var(--border))}
+.node-dot.orange{background:var(--orange-dim);border:1.5px solid var(--orange);color:var(--orange)}
+.node-dot.orange::after{background:linear-gradient(to bottom,var(--orange),var(--border))}
+
+.node-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:14px;transition:border-color .3s}
+.node-card:hover{border-color:var(--border-hi)}
+.node-card h3{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-.2px}
+.node-card .ndesc{font-size:13px;color:var(--text-2);margin-bottom:12px;line-height:1.6}
+
+.dbox{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:8px}
+.dbox h4{font-family:'Geist Mono',monospace;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.dbox.gold-b h4{color:var(--gold)}.dbox.cyan-b h4{color:var(--cyan)}.dbox.emerald-b h4{color:var(--emerald)}.dbox.violet-b h4{color:var(--violet)}.dbox.rose-b h4{color:var(--rose)}.dbox.sky-b h4{color:var(--sky)}.dbox.orange-b h4{color:var(--orange)}
+.dbox p{font-size:12px;color:var(--text-2);line-height:1.55}
+
+.cline{font-family:'Geist Mono',monospace;font-size:11px;color:var(--emerald);background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.12);padding:8px 12px;border-radius:6px;margin-top:8px;overflow-x:auto}
+
+.tech-badge{display:inline-block;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:4px;margin-right:4px;margin-top:4px}
+.tb-bedrock{color:var(--gold);background:var(--gold-dim)}
+.tb-node{color:var(--emerald);background:var(--emerald-dim)}
+.tb-libre{color:var(--cyan);background:var(--cyan-dim)}
+.tb-langfuse{color:var(--violet);background:var(--violet-dim)}
+
+/* ─── AGENT REGISTRY ─── */
+.agent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:10px}
+.agent-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;transition:border-color .3s,transform .2s}
+.agent-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.agent-card .a-icon{font-size:22px;margin-bottom:6px}
+.agent-card h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:3px}
+.agent-card p{font-size:11px;color:var(--text-3);line-height:1.4}
+.agent-card .status{font-family:'Geist Mono',monospace;font-size:8.5px;letter-spacing:1px;text-transform:uppercase;margin-top:8px;padding:3px 8px;border-radius:4px;display:inline-block}
+.status.spawned{color:var(--emerald);background:var(--emerald-dim)}
+.status.pending{color:var(--gold);background:var(--gold-dim)}
+.status.dormant{color:var(--text-3);background:rgba(92,99,128,.15)}
+
+/* ─── SCRAPER PIPELINE ─── */
+.pipe{display:grid;grid-template-columns:1fr 36px 1fr 36px 1fr;gap:0;align-items:center;margin:14px 0}
+.pipe-box{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.pipe-box .p-icon{font-size:22px;margin-bottom:5px}
+.pipe-box h4{font-size:12px;font-weight:600;color:#fff;margin-bottom:2px}
+.pipe-box p{font-size:10.5px;color:var(--text-3)}
+.pipe-arrow{text-align:center;color:var(--violet);font-size:16px;font-weight:700}
+
+/* ─── LANGFUSE OBSERVABILITY ─── */
+.obs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.obs-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px}
+.obs-card h4{font-size:13px;font-weight:600;color:#fff;margin-bottom:4px}
+.obs-card p{font-size:12px;color:var(--text-2);line-height:1.5}
+.obs-card .metric{font-family:'Geist Mono',monospace;font-size:22px;font-weight:700;margin-bottom:4px}
+.obs-card .metric.v1{color:var(--violet)}
+.obs-card .metric.v2{color:var(--emerald)}
+.obs-card .metric.v3{color:var(--gold)}
+
+/* ─── SELF-LEARNING LOOP ─── */
+.loop-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;position:relative;overflow:hidden}
+.loop-wrap::before{content:'';position:absolute;top:-40%;right:-15%;width:350px;height:350px;background:radial-gradient(circle,var(--emerald-dim) 0%,transparent 65%);pointer-events:none}
+.loop-flex{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;position:relative;z-index:1}
+.loop-item{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center;min-width:110px;flex:1}
+.loop-item .l-icon{font-size:20px;margin-bottom:3px}
+.loop-item h4{font-size:11px;font-weight:600;color:#fff;margin-bottom:1px}
+.loop-item p{font-size:9.5px;color:var(--text-3)}
+.loop-sep{color:var(--emerald);font-size:16px;display:flex;align-items:center;justify-content:center;min-width:20px;flex-shrink:0}
+
+/* ─── FILE TREE ─── */
+.tree{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;font-family:'Geist Mono',monospace;font-size:12px;line-height:2;color:var(--text-2)}
+.tree .dir{color:var(--gold);font-weight:600}
+.tree .file{color:var(--cyan)}
+.tree .comment{color:var(--text-3);font-style:italic}
+
+/* ─── DEMO GUIDE ─── */
+.demo-grid{display:grid;gap:10px;counter-reset:demo}
+.demo-row{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:36px 1fr 64px;gap:12px;align-items:start;counter-increment:demo}
+.demo-row::before{content:counter(demo);font-family:'Geist Mono',monospace;font-weight:700;font-size:18px;color:var(--gold)}
+.demo-row h4{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.demo-row p{font-size:12px;color:var(--text-2)}
+.demo-row .dur{font-family:'Geist Mono',monospace;font-size:10px;color:var(--text-3);text-align:right}
+
+.footer{text-align:center;padding:40px 0 12px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border);margin-top:48px}
+
+@media(max-width:700px){
+  .stack-banner{grid-template-columns:1fr 1fr}
+  .agent-grid{grid-template-columns:1fr}
+  .pipe{grid-template-columns:1fr;gap:6px}
+  .pipe-arrow{transform:rotate(90deg)}
+  .loop-flex{flex-direction:column}
+  .loop-sep{transform:rotate(90deg)}
+  .demo-row{grid-template-columns:28px 1fr 50px}
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<div class="hero">
+  <div class="pill">Hackathon Architecture v2</div>
+  <div class="logo-ar"><span>BarqAdl ⚡</span></div>
+  <div class="logo-sub">Justice at the speed of light.</div>
+  <div class="logo-tag">An agentic legal AI platform that provides instant, reliable legal guidance — reducing wait times, lowering costs, and making justice accessible on demand.</div>
+</div>
+
+<!-- ═══════════════ TECH STACK ═══════════════ -->
+<div class="sec">
+  <div class="sec-tag">Tech Stack</div>
+  <div class="sec-title">The 4 Pillars</div>
+  <div class="stack-banner">
+    <div class="stack-item">
+      <div class="s-icon">💬</div>
+      <div class="s-role c1">Frontend</div>
+      <h3>LibreChat</h3>
+      <p>Open-source chat UI. Users interact with BarqAdl through a polished, multi-model chat interface. Handles conversation threads, file uploads, and streaming responses.</p>
+    </div>
+    <div class="stack-item">
+      <div class="s-icon">⚙️</div>
+      <div class="s-role c2">Backend / API</div>
+      <h3>Node.js</h3>
+      <p>Orchestration server. Routes messages, manages agent registry, spawns sub-agents, coordinates the skill scraper, and communicates with Bedrock. Express + WebSocket for real-time.</p>
+    </div>
+    <div class="stack-item">
+      <div class="s-icon">🧠</div>
+      <div class="s-role c3">AI Engine</div>
+      <h3>AWS Bedrock (ADK)</h3>
+      <p>LLM backbone. All agents run on Bedrock (Claude). Knowledge Bases for RAG. S3 for document storage. The Agent Development Kit (ADK) for agent orchestration.</p>
+    </div>
+    <div class="stack-item">
+      <div class="s-icon">📊</div>
+      <div class="s-role c4">Observability</div>
+      <h3>LangFuse</h3>
+      <p>Tracks every agent call, scores, latencies, token usage. Powers the self-improvement dashboard. Makes learning visible. This is your proof for judges.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FULL ARCHITECTURE FLOW ═══════════════ -->
+<div class="sec">
+  <div class="sec-tag">Architecture</div>
+  <div class="sec-title">End-to-End Flow</div>
+  <div class="sec-desc">From user message in LibreChat → Node.js backend → Bedrock agents → response. Every step traced in LangFuse.</div>
+
+  <div class="flow">
+
+    <!-- STEP 1 -->
+    <div class="flow-node">
+      <div class="node-dot cyan">💬</div>
+      <div class="node-card">
+        <h3>Step 1 — User Sends Message via LibreChat</h3>
+        <div class="ndesc">User types their legal situation in the LibreChat interface. Message is sent via API to the Node.js backend. LibreChat handles conversation history, streaming, and UI state.</div>
+        <div class="dbox cyan-b">
+          <h4>LibreChat Integration</h4>
+          <p>Configure LibreChat to point to your Node.js backend as a custom endpoint. User messages arrive as POST requests with conversation context. LibreChat handles SSE streaming for real-time response display.</p>
+        </div>
+        <span class="tech-badge tb-libre">LIBRECHAT</span>
+        <span class="tech-badge tb-node">NODE.JS</span>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="flow-node">
+      <div class="node-dot gold">🧠</div>
+      <div class="node-card">
+        <h3>Step 2 — Orchestrator Agent Classifies</h3>
+        <div class="ndesc">The <strong>Orchestrator</strong> is the first Bedrock agent to run. It analyzes the user's message, classifies the legal domain, extracts entities, and determines which sub-agents are needed. All traced in LangFuse as a parent span.</div>
+        <div class="dbox gold-b">
+          <h4>Classification Output</h4>
+          <p>
+            <strong>domains:</strong> ["labor", "visa"] — can be multi-domain<br>
+            <strong>sub_topics:</strong> ["unpaid_wages", "visa_cancellation_threat"]<br>
+            <strong>entities:</strong> { employer, months_unpaid: 3, has_contract: true }<br>
+            <strong>urgency:</strong> "high"<br>
+            <strong>complexity:</strong> "multi-domain"
+          </p>
+        </div>
+        <div class="cline">→ Prompt: /prompts/orchestrator-classifier.md</div>
+        <span class="tech-badge tb-bedrock">BEDROCK CLAUDE</span>
+        <span class="tech-badge tb-langfuse">LANGFUSE TRACE</span>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="flow-node">
+      <div class="node-dot emerald">⚡</div>
+      <div class="node-card">
+        <h3>Step 3 — Agent Registry: Check → Spawn</h3>
+        <div class="ndesc">Node.js checks the <strong>Agent Registry</strong> (in-memory + DynamoDB). Does a sub-agent for "labor" exist? If yes, activate it with its accumulated skills. If no, spawn a new one and trigger the Skill Scraper.</div>
+        <div class="dbox emerald-b">
+          <h4>Registry Logic (Node.js)</h4>
+          <p>
+            <strong>const agent = registry.get("labor");</strong><br>
+            <strong>if (agent)</strong> → reuse agent, load cached skills, skip scraping<br>
+            <strong>else</strong> → spawn new LaborAgent → trigger skillScraper.equip("labor") → register in DynamoDB<br>
+            <strong>if (multi-domain)</strong> → spawn/activate agents in parallel with Promise.all()
+          </p>
+        </div>
+        <div class="cline">registry.getOrSpawn("labor") → { agent: LaborAgent, skills: 14, score_avg: 8.2 }</div>
+        <span class="tech-badge tb-node">NODE.JS REGISTRY</span>
+        <span class="tech-badge tb-langfuse">LANGFUSE SPAN</span>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="flow-node">
+      <div class="node-dot violet">🔎</div>
+      <div class="node-card">
+        <h3>Step 4 — Skill Scraper Agent Equips</h3>
+        <div class="ndesc">When a new domain sub-agent is spawned, the <strong>Skill Scraper Agent</strong> searches for UAE legal resources online, extracts structured content, and loads it into the sub-agent's Bedrock Knowledge Base as retrievable skills.</div>
+        <div class="dbox violet-b">
+          <h4>Scraping Pipeline</h4>
+          <p>
+            <strong>1. Search:</strong> Query domain-specific sources (MOHRE.gov.ae, RERA, DED, ICP.gov.ae, legal databases)<br>
+            <strong>2. Extract:</strong> Pull legal articles, procedures, forms, timelines from pages<br>
+            <strong>3. Structure:</strong> Chunk into skill objects { law_reference, content, source_url, domain }<br>
+            <strong>4. Inject:</strong> Upload to S3 → sync to Bedrock Knowledge Base → attach to sub-agent
+          </p>
+        </div>
+        <div class="cline">→ Prompt: /prompts/skill-scraper.md</div>
+        <span class="tech-badge tb-bedrock">BEDROCK KB</span>
+        <span class="tech-badge tb-node">NODE.JS SCRAPER</span>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="flow-node">
+      <div class="node-dot sky">📋</div>
+      <div class="node-card">
+        <h3>Step 5 — Sub-Agent Generates Action Plan</h3>
+        <div class="ndesc">The domain-specific sub-agent uses its scraped skills (via Bedrock Knowledge Base retrieval) to generate a structured, cited action plan. Each sub-agent has its own specialized prompt loaded from /prompts/.</div>
+        <div class="dbox sky-b">
+          <h4>Action Plan Structure</h4>
+          <p>
+            <strong>case_summary:</strong> Clear classification of the legal situation<br>
+            <strong>applicable_laws:</strong> Specific UAE law articles with citations<br>
+            <strong>action_steps:</strong> Step 1 → Step 2 → Step 3 (with timelines)<br>
+            <strong>authorities:</strong> MOHRE / RERA / Courts / Police (with contact info)<br>
+            <strong>estimated_timeline:</strong> How long each step takes<br>
+            <strong>estimated_outcome:</strong> Realistic expectations
+          </p>
+        </div>
+        <div class="cline">→ Prompt: /prompts/sub-agent-{domain}.md (labor, tenancy, commercial, visa)</div>
+        <span class="tech-badge tb-bedrock">BEDROCK CLAUDE + KB RAG</span>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="flow-node">
+      <div class="node-dot rose">🧪</div>
+      <div class="node-card">
+        <h3>Step 6 — Judge Agent Evaluates & Scores</h3>
+        <div class="ndesc">A separate <strong>Judge Agent</strong> independently evaluates the action plan. Scores are pushed to LangFuse as evaluation metrics — this is your self-improvement proof. If score is below threshold, the sub-agent regenerates with the judge's feedback.</div>
+        <div class="dbox rose-b">
+          <h4>Scoring Dimensions (1-10 each, threshold: 32/40)</h4>
+          <p>
+            <strong>legal_accuracy:</strong> Are cited laws correct and current?<br>
+            <strong>completeness:</strong> All aspects of the user's case covered?<br>
+            <strong>actionability:</strong> Can the user actually follow these steps?<br>
+            <strong>citation_quality:</strong> Sources properly referenced from scraped skills?
+          </p>
+        </div>
+        <div class="dbox violet-b">
+          <h4>LangFuse Integration</h4>
+          <p>
+            Every evaluation is logged as a LangFuse score attached to the trace. Over time, you get a dashboard showing: avg scores trending upward, retry rates dropping, per-domain improvement curves. This IS your self-improvement proof for judges.
+          </p>
+        </div>
+        <div class="cline">→ Prompt: /prompts/judge-evaluator.md → LangFuse: trace.score("accuracy", 8)</div>
+        <span class="tech-badge tb-bedrock">BEDROCK CLAUDE</span>
+        <span class="tech-badge tb-langfuse">LANGFUSE SCORES</span>
+      </div>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="flow-node">
+      <div class="node-dot orange">✅</div>
+      <div class="node-card">
+        <h3>Step 7 — Respond, Learn, Evolve</h3>
+        <div class="ndesc">Approved response streams back through Node.js → LibreChat to the user. Agent memory is updated. If the judge flagged skill gaps, the scraper fetches more resources. Next time this domain is queried, the sub-agent starts with all accumulated knowledge.</div>
+        <div class="dbox orange-b">
+          <h4>What Gets Stored (Self-Learning Memory)</h4>
+          <p>
+            <strong>strategy_used:</strong> Which prompt template + retrieval config worked<br>
+            <strong>judge_scores:</strong> All 4 dimensions → DynamoDB + LangFuse<br>
+            <strong>user_feedback:</strong> Thumbs up/down from LibreChat<br>
+            <strong>skill_gaps:</strong> Missing info flagged by judge → triggers new scraping<br>
+            <strong>improved_prompt:</strong> If strategy was refined, save the better version
+          </p>
+        </div>
+        <div class="cline">→ Prompt: /prompts/response-formatter.md</div>
+        <span class="tech-badge tb-libre">LIBRECHAT SSE</span>
+        <span class="tech-badge tb-node">NODE.JS</span>
+        <span class="tech-badge tb-langfuse">LANGFUSE FEEDBACK</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ AGENT REGISTRY ═══════════════ -->
+<div class="sec">
+  <div class="sec-tag">Dynamic Agents</div>
+  <div class="sec-title">Sub-Agent Registry</div>
+  <div class="sec-desc">Agents are spawned on first encounter with a domain. They persist and accumulate skills over time. New domains = new agents, automatically.</div>
+  <div class="agent-grid">
+    <div class="agent-card">
+      <div class="a-icon">⚖️</div>
+      <h4>Labor Agent</h4>
+      <p>UAE labor law, MOHRE, wages, termination, gratuity, WPS</p>
+      <div class="status spawned">active · 14 skills</div>
+    </div>
+    <div class="agent-card">
+      <div class="a-icon">🏠</div>
+      <h4>Tenancy Agent</h4>
+      <p>Rental disputes, RERA, eviction, Ejari, rent calculator</p>
+      <div class="status spawned">active · 11 skills</div>
+    </div>
+    <div class="agent-card">
+      <div class="a-icon">🏢</div>
+      <h4>Commercial Agent</h4>
+      <p>Business setup, freezones, trade licenses, shareholder rights</p>
+      <div class="status pending">spawning...</div>
+    </div>
+    <div class="agent-card">
+      <div class="a-icon">🛂</div>
+      <h4>Visa Agent</h4>
+      <p>Work permits, golden visa, cancellation, dependent visas</p>
+      <div class="status pending">spawning...</div>
+    </div>
+    <div class="agent-card">
+      <div class="a-icon">👪</div>
+      <h4>Family Agent</h4>
+      <p>Divorce, custody, inheritance, personal status law</p>
+      <div class="status dormant">not yet needed</div>
+    </div>
+    <div class="agent-card">
+      <div class="a-icon">🚨</div>
+      <h4>Criminal Agent</h4>
+      <p>Cybercrime, fraud, bounced cheques, defamation</p>
+      <div class="status dormant">not yet needed</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ LANGFUSE OBSERVABILITY ═══════════════ -->
+<div class="sec">
+  <div class="sec-tag">Observability — LangFuse</div>
+  <div class="sec-title">Self-Improvement Dashboard (Proof for Judges)</div>
+  <div class="sec-desc">LangFuse isn't just logging — it's your evidence that the system learns. Show judges these metrics improving in real-time.</div>
+  <div class="obs-grid">
+    <div class="obs-card">
+      <div class="metric v1">Traces</div>
+      <h4>Full Request Tracing</h4>
+      <p>Every user query = 1 trace with nested spans: classification → registry check → scraping → generation → evaluation. See the full journey of every request.</p>
+    </div>
+    <div class="obs-card">
+      <div class="metric v2">Scores ↑</div>
+      <h4>Evaluation Trends</h4>
+      <p>Judge scores logged per trace. Show the graph: Query 1 scored 6.5 → Query 10 scored 8.8. This IS your self-improvement proof. LangFuse charts this automatically.</p>
+    </div>
+    <div class="obs-card">
+      <div class="metric v3">Retries ↓</div>
+      <h4>Retry Rate Dropping</h4>
+      <p>Track how often the judge triggers a retry. Early on: 40% retry rate. After learning: 10%. Fewer retries = agent is getting smarter. LangFuse shows this trend.</p>
+    </div>
+    <div class="obs-card">
+      <div class="metric v1">Tokens</div>
+      <h4>Cost & Latency</h4>
+      <p>Track token usage and response times per agent. Show optimization: the system gets faster and cheaper as it stops retrying and reuses cached strategies.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SELF-LEARNING LOOP ═══════════════ -->
+<div class="sec">
+  <div class="sec-tag">Self-Improvement</div>
+  <div class="sec-title">The Loop That Makes BarqAdl Smarter</div>
+  <div class="sec-desc">Every query improves the system in 4 ways: new agents spawn, skills accumulate, strategies optimize, and gaps get filled.</div>
+  <div class="loop-wrap">
+    <div class="loop-flex">
+      <div class="loop-item"><div class="l-icon">📥</div><h4>Query In</h4><p>LibreChat</p></div>
+      <div class="loop-sep">→</div>
+      <div class="loop-item"><div class="l-icon">🏷️</div><h4>Classify</h4><p>Orchestrator</p></div>
+      <div class="loop-sep">→</div>
+      <div class="loop-item"><div class="l-icon">⚡</div><h4>Spawn/Reuse</h4><p>Registry</p></div>
+      <div class="loop-sep">→</div>
+      <div class="loop-item"><div class="l-icon">🔎</div><h4>Scrape Skills</h4><p>If new domain</p></div>
+      <div class="loop-sep">→</div>
+      <div class="loop-item"><div class="l-icon">📋</div><h4>Generate</h4><p>Sub-Agent</p></div>
+      <div class="loop-sep">→</div>
+      <div class="loop-item"><div class="l-icon">🧪</div><h4>Evaluate</h4><p>Judge</p></div>
+      <div class="loop-sep">→</div>
+      <div class="loop-item"><div class="l-icon">💾</div><h4>Learn</h4><p>LangFuse</p></div>
+      <div class="loop-sep" style="color:var(--gold)">↻</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PROMPT FILES ═══════════════ -->
+<div class="sec">
+  <div class="sec-tag">Prompts</div>
+  <div class="sec-title">Prompt Files Structure</div>
+  <div class="sec-desc">Every agent has its own prompt as a versioned .md file. This makes prompts testable, trackable, and improvable.</div>
+  <div class="tree">
+    <span class="dir">📁 barqadl/</span><br>
+    ├── <span class="dir">📁 prompts/</span><br>
+    │&nbsp;&nbsp; ├── <span class="file">orchestrator-classifier.md</span> <span class="comment">← Classifies domain, extracts entities</span><br>
+    │&nbsp;&nbsp; ├── <span class="file">skill-scraper.md</span> <span class="comment">← Guides web scraping + structuring</span><br>
+    │&nbsp;&nbsp; ├── <span class="file">sub-agent-labor.md</span> <span class="comment">← Labor law specialist prompt</span><br>
+    │&nbsp;&nbsp; ├── <span class="file">sub-agent-tenancy.md</span> <span class="comment">← Tenancy/rental specialist prompt</span><br>
+    │&nbsp;&nbsp; ├── <span class="file">sub-agent-commercial.md</span> <span class="comment">← Business setup specialist prompt</span><br>
+    │&nbsp;&nbsp; ├── <span class="file">sub-agent-visa.md</span> <span class="comment">← Visa/immigration specialist prompt</span><br>
+    │&nbsp;&nbsp; ├── <span class="file">judge-evaluator.md</span> <span class="comment">← Scores responses, triggers retries</span><br>
+    │&nbsp;&nbsp; └── <span class="file">response-formatter.md</span> <span class="comment">← Formats final output for user</span><br>
+    ├── <span class="file">self-learning-guide.md</span> <span class="comment">← How to demo self-improvement to judges</span><br>
+    └── <span class="file">architecture.html</span> <span class="comment">← This document</span>
+  </div>
+</div>
+
+<!-- ═══════════════ DEMO SCRIPT ═══════════════ -->
+<div class="sec">
+  <div class="sec-tag">Demo Day</div>
+  <div class="sec-title">3-Minute Demo Script</div>
+  <div class="demo-grid">
+    <div class="demo-row">
+      <div><h4>The Problem</h4><p>"3.5M expats in the UAE face legal issues daily. Legal advice costs AED 500+/hour. Wait times: weeks. BarqAdl gives instant, accurate legal guidance — justice at the speed of light."</p></div>
+      <div class="dur">~20s</div>
+    </div>
+    <div class="demo-row">
+      <div><h4>Live Query — First Time</h4><p>Type in LibreChat: "My employer hasn't paid me in 3 months." Show the Orchestrator classifying → new Labor Agent spawning → Skill Scraper fetching MOHRE resources → action plan generated.</p></div>
+      <div class="dur">~40s</div>
+    </div>
+    <div class="demo-row">
+      <div><h4>Show LangFuse Trace</h4><p>Switch to LangFuse dashboard. Show the full trace: classification span → scraping span → generation span → judge evaluation. Show the score: 7.2/10. Judge flagged: "Missing WPS reference."</p></div>
+      <div class="dur">~30s</div>
+    </div>
+    <div class="demo-row">
+      <div><h4>Self-Improvement in Action</h4><p>Ask a similar labor question. Show: no scraping needed (skills cached), score jumps to 8.8/10, WPS is now automatically included. Show the LangFuse score trend chart going UP.</p></div>
+      <div class="dur">~30s</div>
+    </div>
+    <div class="demo-row">
+      <div><h4>New Domain — Watch It Spawn</h4><p>Ask a tenancy question. Show a NEW Tenancy Agent spawning live, scraper fetching RERA resources. "The system builds itself around every new legal domain."</p></div>
+      <div class="dur">~30s</div>
+    </div>
+    <div class="demo-row">
+      <div><h4>Close — Tech + Vision</h4><p>"LibreChat frontend, Node.js orchestration, Bedrock agents, LangFuse observability. BarqAdl doesn't just answer — it evolves. Every query makes it smarter. This is justice, at the speed of light."</p></div>
+      <div class="dur">~20s</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  BarqAdl ⚡ Justice at the speed of light. — Hackathon Architecture v2
+</div>
+
+</div>
+</body>
+</html>
