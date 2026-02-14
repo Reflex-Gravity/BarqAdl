@@ -24,6 +24,10 @@ const handleChat = async (userMessage, conversationHistory, trace, emitter) => {
   });
 
   // 2. For each domain, get or spawn a sub-agent
+  if (!classification.domains || classification.domains.length === 0) {
+    classification.domains = ['labor'];
+    classification.routing = classification.routing || { primary_agent: 'labor', secondary_agents: [], needs_scraping: false };
+  }
   const registry = getRegistry();
   const agentResults = await Promise.all(
     classification.domains.map(domain => registry.getOrSpawn(domain, trace))
