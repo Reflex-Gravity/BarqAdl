@@ -5,7 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const { errorHandler } = require('./middleware/errorHandler');
 const { shutdownLangfuse } = require('./config/langfuse');
-const { readJSON } = require('./config/db');
+const { readJSON, initDatabase } = require('./config/db');
 
 const chatRoutes = require('./routes/chat');
 const agentRoutes = require('./routes/agents');
@@ -47,17 +47,22 @@ app.use(errorHandler);
 
 // Only start listening when running directly (not in Lambda)
 if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
-  const server = app.listen(PORT, () => {
-    console.log(`\n⚡ BarqAdl — Justice at the speed of light`);
-    console.log(`  Server running on http://localhost:${PORT}`);
-    console.log(`  Environment: ${process.env.NODE_ENV || 'development'}\n`);
-  });
+  (async () => {
+    // Initialize Supabase (create tables, sync data)
+    await initDatabase();
 
-  process.on('SIGTERM', async () => {
-    console.log('Shutting down...');
-    await shutdownLangfuse();
-    server.close();
-  });
+    const server = app.listen(PORT, () => {
+      console.log(`\n⚡ BarqAdl — Justice at the speed of light`);
+      console.log(`  Server running on http://localhost:${PORT}`);
+      console.log(`  Environment: ${process.env.NODE_ENV || 'development'}\n`);
+    });
+
+    process.on('SIGTERM', async () => {
+      console.log('Shutting down...');
+      await shutdownLangfuse();
+      server.close();
+    });
+  })();
 }
 
 module.exports = app;

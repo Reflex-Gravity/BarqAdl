@@ -188,10 +188,67 @@
   ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
   ::-webkit-scrollbar-thumb:hover { background:#334155; }
 
+  /* Learning Proof Section */
+  .learning-proof { padding:0 32px 16px; }
+  .learning-proof .section-header { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+  .learning-proof .section-header h2 { font-size:18px; font-weight:700; }
+  .learning-proof .section-header .pulse-dot { width:10px; height:10px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
+
+  .learning-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px; }
+  .learning-kpi { background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.02)); border:1px solid rgba(16,185,129,0.2); border-radius:12px; padding:16px; text-align:center; }
+  .learning-kpi .lk-value { font-size:28px; font-weight:800; color:var(--green); }
+  .learning-kpi .lk-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:4px; }
+  .learning-kpi .lk-sub { font-size:12px; color:var(--green); margin-top:4px; }
+
+  .learning-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:14px; margin-bottom:16px; }
+  .learning-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px; transition:box-shadow .3s; }
+  .learning-card:hover { box-shadow:0 0 20px rgba(16,185,129,0.1); }
+  .learning-card.latest { border-color:rgba(16,185,129,0.4); animation:glowCard 2s ease-in-out infinite; }
+  @keyframes glowCard { 0%,100%{box-shadow:0 0 8px rgba(16,185,129,0.15)} 50%{box-shadow:0 0 24px rgba(16,185,129,0.3)} }
+  .lc-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .lc-domain { font-weight:700; text-transform:capitalize; font-size:14px; }
+  .lc-version-badge { display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; padding:3px 10px; border-radius:12px; background:rgba(59,130,246,0.12); color:var(--accent); }
+  .lc-version-badge .arrow { color:var(--green); }
+  .lc-diff { margin:8px 0; }
+  .lc-diff-line { font-size:13px; padding:4px 8px; border-radius:4px; margin-bottom:4px; font-family:'Cascadia Code','Fira Code',monospace; }
+  .lc-diff-line.added { background:rgba(16,185,129,0.1); color:var(--green); border-left:3px solid var(--green); }
+  .lc-score-delta { font-size:12px; color:var(--muted); margin-top:8px; display:flex; align-items:center; gap:6px; }
+  .lc-score-delta .positive { color:var(--green); font-weight:700; }
+  .lc-score-delta .negative { color:var(--red); font-weight:700; }
+  .lc-details { margin-top:8px; }
+  .lc-details summary { font-size:11px; color:var(--muted); cursor:pointer; user-select:none; }
+  .lc-details .inherited-list { list-style:none; padding:0; margin-top:6px; }
+  .lc-details .inherited-list li { font-size:11px; color:var(--muted); padding:2px 0 2px 14px; position:relative; }
+  .lc-details .inherited-list li::before { content:'\2022'; position:absolute; left:2px; color:var(--border); }
+  .lc-timestamp { font-size:10px; color:var(--muted); margin-top:6px; opacity:0.7; }
+
+  /* Toast Notification */
+  .toast-container { position:fixed; top:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+  .toast { background:linear-gradient(135deg,#065f46,#064e3b); border:1px solid rgba(16,185,129,0.4); border-radius:10px; padding:14px 18px; color:var(--green); font-size:13px; max-width:380px; box-shadow:0 8px 32px rgba(0,0,0,0.4); animation:toastIn .4s ease; pointer-events:auto; }
+  .toast .toast-title { font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+  .toast .toast-body { color:#a7f3d0; font-size:12px; line-height:1.4; }
+  @keyframes toastIn { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+  .toast.out { animation:toastOut .3s ease forwards; }
+  @keyframes toastOut { to{opacity:0;transform:translateX(40px)} }
+
+  /* Learning step in progress log */
+  .progress-log .step.learned { color:var(--green); font-weight:600; }
+  .progress-log .step.learned .dot { background:var(--green); box-shadow:0 0 8px var(--green); }
+
+  /* Self-Learning Event panel after chat result */
+  .learning-event-panel { background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(16,185,129,0.02)); border:1px solid rgba(16,185,129,0.25); border-radius:10px; padding:16px; margin-top:16px; }
+  .learning-event-panel .lep-title { font-size:12px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+  .learning-event-panel .lep-body { font-size:13px; color:#a7f3d0; line-height:1.5; }
+
+  /* Learning Velocity Chart */
+  .learning-velocity-chart { position:relative; height:280px; }
+
   @media (max-width:900px) {
     .kpi-strip { grid-template-columns:repeat(3,1fr); }
     .grid { grid-template-columns:1fr; }
     .grid.three { grid-template-columns:1fr; }
+    .learning-kpis { grid-template-columns:repeat(2,1fr); }
+    .learning-cards { grid-template-columns:1fr; }
   }
 </style>
 </head>
@@ -212,6 +269,29 @@
   <div class="kpi yellow"><div class="label">Retry Rate</div><div class="value" id="kpiRetryRate">-</div></div>
   <div class="kpi purple"><div class="label">Active Agents</div><div class="value" id="kpiAgents">-</div></div>
   <div class="kpi red"><div class="label">Pass Rate</div><div class="value" id="kpiPassRate">-</div></div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Learning Proof Section -->
+<div class="learning-proof" id="learningProofSection">
+  <div class="card full-width">
+    <div class="section-header">
+      <div class="pulse-dot"></div>
+      <h2>Self-Learning Proof</h2>
+    </div>
+    <div class="learning-kpis" id="learningKpis"></div>
+    <div class="learning-cards" id="learningCards"></div>
+  </div>
+</div>
+
+<!-- Learning Velocity Chart -->
+<div style="padding:0 32px 16px;">
+  <div class="card full-width">
+    <h2><span class="icon">&#127793;</span> Learning Velocity — Score vs Strategy Evolution</h2>
+    <div class="learning-velocity-chart"><canvas id="learningVelocityChart"></canvas></div>
+  </div>
 </div>
 
 <!-- Architecture Diagram -->
@@ -330,6 +410,7 @@ const API = window.location.origin;
 let metricsData = null;
 let agentsData = null;
 let improvementLog = [];
+let learningData = null;
 
 // Fetch all data
 async function fetchData() {
@@ -345,8 +426,13 @@ async function fetchData() {
     const logRes = await fetch(API + '/api/improvement-log').then(r => r.json()).catch(() => []);
     improvementLog = logRes;
 
+    // Fetch learning timeline
+    learningData = await fetch(API + '/api/metrics/learning-timeline').then(r => r.json()).catch(() => null);
+
     renderKPIs();
     renderCharts();
+    renderLearningProof();
+    renderLearningVelocityChart();
     renderStrategy();
     renderAgents();
     renderQueryLog();
@@ -500,6 +586,128 @@ function renderCharts() {
   });
 }
 
+// === Learning Proof ===
+function renderLearningProof() {
+  if (!learningData) return;
+  const s = learningData.summary;
+  const kpisEl = document.getElementById('learningKpis');
+  const cardsEl = document.getElementById('learningCards');
+
+  kpisEl.innerHTML = `
+    <div class="learning-kpi"><div class="lk-value">${s.totalLearnings}</div><div class="lk-label">Total Learnings</div></div>
+    <div class="learning-kpi"><div class="lk-value">${s.domainsEvolved}</div><div class="lk-label">Domains Evolved</div></div>
+    <div class="learning-kpi"><div class="lk-value">${s.v1Avg}/40</div><div class="lk-label">v1 Avg Score</div></div>
+    <div class="learning-kpi"><div class="lk-value">${s.latestAvg}/40</div><div class="lk-label">Latest Avg Score</div><div class="lk-sub">${s.scoreDelta >= 0 ? '+' : ''}${s.scoreDelta} improvement</div></div>
+  `;
+
+  cardsEl.innerHTML = '';
+  learningData.events.forEach((ev, i) => {
+    const isLatest = i === 0;
+    const inherited = ev.inheritedEnhancements || [];
+    const deltaStr = ev.scoreDelta >= 0 ? `+${ev.scoreDelta}` : `${ev.scoreDelta}`;
+    const deltaClass = ev.scoreDelta >= 0 ? 'positive' : 'negative';
+    const timeStr = ev.createdAt ? new Date(ev.createdAt).toLocaleString() : '';
+
+    const card = document.createElement('div');
+    card.className = 'learning-card' + (isLatest ? ' latest' : '');
+    card.innerHTML = `
+      <div class="lc-header">
+        <span class="lc-domain">${ev.domain}</span>
+        <span class="lc-version-badge">${ev.fromVersion} <span class="arrow">&rarr;</span> ${ev.toVersion}</span>
+      </div>
+      <div class="lc-diff">
+        <div class="lc-diff-line added">+ ${ev.learned}</div>
+      </div>
+      <div class="lc-score-delta">Score: ${ev.previousAvgScore}/40 &rarr; ${ev.currentAvgScore}/40 <span class="${deltaClass}">(${deltaStr})</span></div>
+      ${inherited.length > 0 ? `<details class="lc-details"><summary>Show ${inherited.length} inherited enhancement${inherited.length > 1 ? 's' : ''}</summary><ul class="inherited-list">${inherited.map(e => '<li>' + e + '</li>').join('')}</ul></details>` : ''}
+      ${timeStr ? `<div class="lc-timestamp">${timeStr}</div>` : ''}
+    `;
+    cardsEl.appendChild(card);
+  });
+}
+
+function renderLearningVelocityChart() {
+  if (!learningData || !learningData.queryTimeline) return;
+  const timeline = learningData.queryTimeline;
+  if (timeline.length === 0) return;
+
+  if (charts.learningVelocity) charts.learningVelocity.destroy();
+
+  const labels = timeline.map((_, i) => 'Q' + (i + 1));
+  const scores = timeline.map(q => q.score);
+  const evolvedIndices = timeline.filter(q => q.evolved).map(q => q.index);
+
+  // Point styling: green circle with halo for evolution points
+  const pointRadius = timeline.map(q => q.evolved ? 8 : 3);
+  const pointBgColor = timeline.map(q => q.evolved ? '#10b981' : '#3b82f6');
+  const pointBorderColor = timeline.map(q => q.evolved ? '#10b981' : 'transparent');
+  const pointBorderWidth = timeline.map(q => q.evolved ? 3 : 0);
+
+  charts.learningVelocity = new Chart(document.getElementById('learningVelocityChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Score per Query',
+        data: scores,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.08)',
+        fill: true,
+        tension: 0.3,
+        pointRadius,
+        pointBackgroundColor: pointBgColor,
+        pointBorderColor: pointBorderColor,
+        pointBorderWidth,
+        pointHoverRadius: 10,
+      }, {
+        label: 'Pass Threshold (32)',
+        data: scores.map(() => 32),
+        borderColor: 'rgba(245,158,11,0.3)',
+        borderDash: [6, 4],
+        pointRadius: 0,
+        fill: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { min: 20, max: 40, grid: { color: 'rgba(30,41,59,0.5)' }, ticks: { color: '#94a3b8' } },
+        x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
+      },
+      plugins: {
+        legend: { labels: { color: '#94a3b8' } },
+        tooltip: {
+          callbacks: {
+            afterBody: function(context) {
+              const idx = context[0].dataIndex;
+              const q = timeline[idx];
+              if (q && q.evolved && q.learned) {
+                return '\nStrategy Evolved!\nLearned: ' + q.learned;
+              }
+              return '';
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+// === Toast Notification ===
+function showToast(title, body, duration) {
+  duration = duration || 5000;
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<div class="toast-title">\u{1F9E0} ${title}</div><div class="toast-body">${body}</div>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('out');
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+
 function renderStrategy() {
   const strategies = metricsData.strategies;
   const domains = Object.keys(strategies);
@@ -528,12 +736,37 @@ function renderStrategy() {
     timelineEl.innerHTML = '';
     strat.versions.forEach((v, i) => {
       const isActive = v.version === strat.active;
+      const prev = i > 0 ? strat.versions[i - 1] : null;
       const item = document.createElement('div');
       item.className = 'timeline-item' + (isActive ? ' active' : '');
+
+      // Determine new vs inherited enhancements
+      const newEnh = v.newEnhancement || null;
+      const inherited = prev ? (prev.enhancements || []) : [];
+      // Compute diff: enhancements not in previous version
+      const diffEnhancements = newEnh ? [newEnh] : v.enhancements.filter(e => !inherited.includes(e));
+      const scoreDelta = prev ? parseFloat(((v.avgScore || 0) - (prev.avgScore || 0)).toFixed(2)) : 0;
+      const deltaStr = scoreDelta >= 0 ? `+${scoreDelta}` : `${scoreDelta}`;
+      const deltaColor = scoreDelta >= 0 ? 'var(--green)' : 'var(--red)';
+
+      let enhHTML = '';
+      if (i === 0) {
+        enhHTML = '<div style="font-size:12px;color:var(--muted)">Base strategy</div>';
+      } else {
+        // New enhancements in green
+        if (diffEnhancements.length > 0) {
+          enhHTML += '<ul class="enhancements">' + diffEnhancements.map(e => '<li style="color:var(--green);font-weight:600;">' + e + '</li>').join('') + '</ul>';
+        }
+        // Inherited in collapsible
+        if (inherited.length > 0) {
+          enhHTML += `<details style="margin-top:4px;"><summary style="font-size:11px;color:var(--muted);cursor:pointer;">${inherited.length} inherited enhancement${inherited.length > 1 ? 's' : ''}</summary><ul class="enhancements" style="margin-top:4px;">${inherited.map(e => '<li style="opacity:0.6">' + e + '</li>').join('')}</ul></details>`;
+        }
+      }
+
       item.innerHTML = `
-        <div class="version">${v.version} ${isActive ? '(active)' : ''}</div>
+        <div class="version">${v.version} ${isActive ? '(active)' : ''} ${i > 0 ? '<span style="font-size:11px;color:' + deltaColor + ';margin-left:8px;">' + deltaStr + '</span>' : ''}</div>
         <div class="score">Avg: ${v.avgScore}/40 | ${v.queryCount} queries</div>
-        ${v.enhancements.length ? '<ul class="enhancements">' + v.enhancements.map(e => '<li>' + e + '</li>').join('') + '</ul>' : '<div style="font-size:12px;color:var(--muted)">Base strategy</div>'}
+        ${enhHTML}
       `;
       timelineEl.appendChild(item);
     });
@@ -693,6 +926,7 @@ async function sendChat() {
   const msg = input.value.trim();
   if (!msg) return;
 
+  let lastLearningEvent = null;
   btn.disabled = true;
   btn.textContent = 'Processing...';
   log.style.display = 'block';
@@ -727,6 +961,17 @@ async function sendChat() {
             const parsed = JSON.parse(data);
             if (parsed.stage === 'done') {
               finalResult = parsed.result;
+            } else if (parsed.stage === 'strategy_evolved') {
+              // Green "LEARNED" step in progress log
+              const step = document.createElement('div');
+              step.className = 'step learned';
+              step.innerHTML = '<div class="dot done"></div><span>LEARNED: ' + (parsed.learned || parsed.message) + '</span>';
+              log.appendChild(step);
+              log.scrollTop = log.scrollHeight;
+              // Toast notification
+              showToast('Strategy Evolved \u2014 ' + (parsed.domain || ''), (parsed.fromVersion || '') + ' \u2192 ' + (parsed.toVersion || '') + ': ' + (parsed.learned || ''));
+              // Store for post-chat panel
+              lastLearningEvent = parsed;
             } else if (parsed.stage) {
               const step = document.createElement('div');
               step.className = 'step';
@@ -742,6 +987,21 @@ async function sendChat() {
 
     if (finalResult) {
       renderChatResult(finalResult);
+      // Append learning event panel if strategy evolved during this chat
+      if (lastLearningEvent) {
+        const panels = document.getElementById('chatPanels');
+        const lep = document.createElement('div');
+        lep.className = 'learning-event-panel';
+        lep.innerHTML = `
+          <div class="lep-title">\u{1F9E0} Self-Learning Event</div>
+          <div class="lep-body">
+            <strong>${(lastLearningEvent.domain || '').charAt(0).toUpperCase() + (lastLearningEvent.domain || '').slice(1)}</strong> strategy evolved from
+            <strong>${lastLearningEvent.fromVersion}</strong> to <strong>${lastLearningEvent.toVersion}</strong><br>
+            <span style="color:var(--green);font-weight:600;">+ ${lastLearningEvent.learned}</span>
+          </div>
+        `;
+        panels.appendChild(lep);
+      }
       setTimeout(fetchData, 500);
     }
   } catch (e) {

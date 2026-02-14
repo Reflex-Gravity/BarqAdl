@@ -52,6 +52,7 @@ class StrategyStore {
     }
 
     // If we have an improvement signal, consider creating a new strategy version
+    let evolvedVersion = null;
     if (improvementSignal?.learned && improvementSignal?.update_prompt) {
       const newVersionNum = domainData.versions.length + 1;
       const newVersion = `v${newVersionNum}`;
@@ -59,16 +60,18 @@ class StrategyStore {
       // Check if the learning is already captured
       const existingEnhancements = active?.enhancements || [];
       if (!existingEnhancements.includes(improvementSignal.learned)) {
-        // Create new version with accumulated enhancements
-        const newStrategy = {
+        evolvedVersion = {
           version: newVersion,
           avgScore: 0,
           totalScore: 0,
           queryCount: 0,
           enhancements: [...existingEnhancements, improvementSignal.learned],
+          createdAt: new Date().toISOString(),
+          newEnhancement: improvementSignal.learned,
+          previousVersion: active?.version || 'v1',
         };
 
-        domainData.versions.push(newStrategy);
+        domainData.versions.push(evolvedVersion);
         domainData.active = newVersion;
 
         console.log(`[StrategyStore] Domain "${domain}" evolved to ${newVersion}: ${improvementSignal.learned}`);
@@ -76,7 +79,7 @@ class StrategyStore {
     }
 
     this.save();
-    return domainData;
+    return { domainData, evolved: !!evolvedVersion, evolvedVersion };
   }
 
   getAllStrategies() {

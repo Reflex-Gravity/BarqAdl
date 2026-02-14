@@ -123,19 +123,36 @@ const handleChat = async (userMessage, conversationHistory, trace, emitter) => {
 
   // 8. Update strategy store with scores and improvement signals
   const strategyStore = getStrategyStore();
-  strategyStore.update(
-    classification.domains[0],
+  const domain = classification.domains[0];
+  const versionBefore = strategyStore.getActiveStrategy(domain)?.version || 'v1';
+
+  const updateResult = strategyStore.update(
+    domain,
     evaluation.scores,
     evaluation.improvement_signal
   );
 
+  const versionAfter = updateResult.domainData.active;
+
+  // Emit strategy_evolved event if version changed
+  if (updateResult.evolved && updateResult.evolvedVersion) {
+    emit('strategy_evolved', {
+      message: `LEARNED: ${updateResult.evolvedVersion.newEnhancement}`,
+      domain,
+      fromVersion: versionBefore,
+      toVersion: versionAfter,
+      learned: updateResult.evolvedVersion.newEnhancement,
+      previousVersion: updateResult.evolvedVersion.previousVersion,
+    });
+  }
+
   // Update agent score in registry
-  registry.updateScore(classification.domains[0], evaluation.scores.total);
+  registry.updateScore(domain, evaluation.scores.total);
 
   // 9. Log to improvement log
   appendToLog('improvement-log.json', {
     query: userMessage.substring(0, 200),
-    domain: classification.domains[0],
+    domain,
     domains: classification.domains,
     urgency: classification.urgency,
     complexity: classification.complexity,
@@ -146,6 +163,10 @@ const handleChat = async (userMessage, conversationHistory, trace, emitter) => {
     pass: evaluation.pass,
     agentsUsed: classification.domains,
     responseTime: Date.now() - startTime,
+    feedback: evaluation.feedback,
+    improvement_signal: evaluation.improvement_signal,
+    strategy_version_before: versionBefore,
+    strategy_version_after: versionAfter,
   });
 
   // 10. Finalize trace
