@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BarqAdl — Self-Improving Legal AI Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@15.0.0/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/styles/github-dark.min.css">
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/languages/javascript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/languages/python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/lib/languages/json.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --card: #111827;
+    --border: #1e293b;
+    --accent: #3b82f6;
+    --accent2: #8b5cf6;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --glow: rgba(59,130,246,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+  /* Header */
+  .header { background:linear-gradient(135deg,#0f172a,#1e1b4b); border-bottom:1px solid var(--border); padding:20px 32px; display:flex; align-items:center; justify-content:space-between; }
+  .header h1 { font-size:24px; font-weight:700; }
+  .header h1 span { color:var(--accent); }
+  .header .subtitle { color:var(--muted); font-size:13px; margin-top:2px; }
+  .header .live-badge { background:var(--green); color:#000; font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+
+  /* KPI Strip */
+  .kpi-strip { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; padding:24px 32px; }
+  .kpi { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; text-align:center; position:relative; overflow:hidden; }
+  .kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+  .kpi.blue::before { background:var(--accent); }
+  .kpi.purple::before { background:var(--accent2); }
+  .kpi.green::before { background:var(--green); }
+  .kpi.yellow::before { background:var(--yellow); }
+  .kpi.red::before { background:var(--red); }
+  .kpi .value { font-size:32px; font-weight:800; margin:8px 0 4px; }
+  .kpi .label { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:1px; }
+  .kpi .delta { font-size:13px; margin-top:6px; }
+  .kpi .delta.up { color:var(--green); }
+  .kpi .delta.down { color:var(--red); }
+
+  /* Grid Layout */
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:0 32px 24px; }
+  .grid.three { grid-template-columns:1fr 1fr 1fr; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; }
+  .card h2 { font-size:15px; font-weight:600; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+  .card h2 .icon { font-size:18px; }
+  .full-width { grid-column: 1 / -1; }
+
+  /* Charts */
+  .chart-container { position:relative; height:280px; }
+
+  /* Strategy Timeline */
+  .timeline { position:relative; padding-left:24px; }
+  .timeline::before { content:''; position:absolute; left:8px; top:0; bottom:0; width:2px; background:var(--border); }
+  .timeline-item { position:relative; margin-bottom:20px; }
+  .timeline-item::before { content:''; position:absolute; left:-20px; top:4px; width:12px; height:12px; border-radius:50%; border:2px solid var(--accent); background:var(--bg); }
+  .timeline-item.active::before { background:var(--accent); box-shadow:0 0 8px var(--accent); }
+  .timeline-item .version { font-weight:700; color:var(--accent); font-size:13px; }
+  .timeline-item .score { color:var(--muted); font-size:12px; margin:2px 0; }
+  .timeline-item .enhancements { list-style:none; margin-top:6px; }
+  .timeline-item .enhancements li { font-size:12px; color:var(--muted); padding:3px 0; padding-left:12px; position:relative; }
+  .timeline-item .enhancements li::before { content:'+'; position:absolute; left:0; color:var(--green); font-weight:700; }
+
+  /* Agent Cards */
+  .agent-card { background:rgba(59,130,246,0.05); border:1px solid rgba(59,130,246,0.15); border-radius:10px; padding:16px; margin-bottom:12px; }
+  .agent-card .agent-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .agent-card .domain { font-weight:700; text-transform:capitalize; font-size:14px; }
+  .agent-card .status { font-size:11px; padding:2px 8px; border-radius:10px; background:rgba(16,185,129,0.15); color:var(--green); }
+  .agent-card .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .agent-card .stat { text-align:center; }
+  .agent-card .stat .num { font-size:18px; font-weight:700; }
+  .agent-card .stat .lbl { font-size:10px; color:var(--muted); text-transform:uppercase; }
+
+  /* Query Log Table */
+  .log-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .log-table th { text-align:left; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:1px; padding:8px; border-bottom:1px solid var(--border); }
+  .log-table td { padding:8px; border-bottom:1px solid rgba(30,41,59,0.5); }
+  .log-table tr:hover { background:rgba(59,130,246,0.05); }
+  .badge { font-size:11px; padding:2px 8px; border-radius:10px; font-weight:600; }
+  .badge.pass { background:rgba(16,185,129,0.15); color:var(--green); }
+  .badge.fail { background:rgba(239,68,68,0.15); color:var(--red); }
+  .badge.retry { background:rgba(245,158,11,0.15); color:var(--yellow); }
+  .badge.domain { background:rgba(139,92,246,0.15); color:var(--accent2); }
+
+  /* Architecture Diagram */
+  .arch-flow { display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:wrap; padding:16px 0; }
+  .arch-node { background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(139,92,246,0.1)); border:1px solid rgba(59,130,246,0.3); border-radius:10px; padding:12px 16px; text-align:center; min-width:120px; }
+  .arch-node .name { font-weight:700; font-size:13px; }
+  .arch-node .model { font-size:10px; color:var(--muted); margin-top:2px; }
+  .arch-node.judge { border-color:rgba(245,158,11,0.5); background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(239,68,68,0.05)); }
+  .arch-arrow { color:var(--muted); font-size:20px; padding:0 8px; }
+  .arch-loop { border:2px dashed rgba(245,158,11,0.3); border-radius:12px; padding:8px 16px; display:flex; align-items:center; gap:0; }
+  .arch-loop-label { font-size:10px; color:var(--yellow); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; text-align:center; }
+
+  /* Chat Test */
+  .chat-box { display:flex; gap:8px; margin-bottom:16px; }
+  .chat-box input { flex:1; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px 16px; color:var(--text); font-size:14px; outline:none; transition:border-color .2s; }
+  .chat-box input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(59,130,246,0.1); }
+  .chat-box button { background:linear-gradient(135deg,#3b82f6,#2563eb); color:#fff; border:none; border-radius:8px; padding:12px 24px; font-weight:600; cursor:pointer; font-size:14px; transition:transform .1s,box-shadow .2s; }
+  .chat-box button:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(59,130,246,0.3); }
+  .chat-box button:disabled { opacity:0.5; cursor:not-allowed; transform:none; box-shadow:none; }
+  .progress-log { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px 16px; max-height:180px; overflow-y:auto; font-family:'Cascadia Code','Fira Code',monospace; font-size:12px; margin-bottom:12px; }
+  .progress-log .step { padding:4px 0; display:flex; align-items:center; gap:10px; }
+  .progress-log .step .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .progress-log .step .dot.active { background:var(--yellow); animation:pulse 1s infinite; }
+  .progress-log .step .dot.done { background:var(--green); }
+
+  /* Chat Result Container */
+  .chat-result { display:none; margin-top:16px; }
+  .chat-result-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap; }
+  .chat-result-header .score-pill { display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:700; }
+  .chat-result-header .score-pill.pass { background:rgba(16,185,129,0.15); color:var(--green); border:1px solid rgba(16,185,129,0.3); }
+  .chat-result-header .score-pill.fail { background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.3); }
+  .chat-result-header .meta-pill { display:inline-flex; align-items:center; gap:4px; padding:4px 12px; border-radius:16px; font-size:12px; background:rgba(139,92,246,0.1); color:var(--accent2); border:1px solid rgba(139,92,246,0.2); }
+  .chat-result-header .meta-pill.domain { background:rgba(59,130,246,0.1); color:var(--accent); border-color:rgba(59,130,246,0.2); }
+  .chat-result-header .meta-pill.urgency-high { background:rgba(239,68,68,0.1); color:var(--red); border-color:rgba(239,68,68,0.2); }
+  .chat-result-header .meta-pill.retry { background:rgba(245,158,11,0.1); color:var(--yellow); border-color:rgba(245,158,11,0.2); }
+
+  /* Score Breakdown Bar */
+  .score-breakdown { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px; }
+  .score-dim { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:10px 12px; text-align:center; }
+  .score-dim .dim-label { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); margin-bottom:4px; }
+  .score-dim .dim-value { font-size:20px; font-weight:800; }
+  .score-dim .dim-bar { height:3px; border-radius:2px; margin-top:6px; background:var(--border); overflow:hidden; }
+  .score-dim .dim-bar-fill { height:100%; border-radius:2px; transition:width .5s ease; }
+
+  /* Panels Layout */
+  .chat-panels { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:1100px) { .chat-panels { grid-template-columns:1fr; } }
+
+  .chat-panel { background:var(--bg); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .chat-panel-header { padding:10px 16px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+  .chat-panel-header.blue { background:rgba(59,130,246,0.06); color:var(--accent); }
+  .chat-panel-header.green { background:rgba(16,185,129,0.06); color:var(--green); }
+  .chat-panel-header.purple { background:rgba(139,92,246,0.06); color:var(--accent2); }
+  .chat-panel-header.yellow { background:rgba(245,158,11,0.06); color:var(--yellow); }
+  .chat-panel-body { padding:16px; max-height:400px; overflow-y:auto; overflow-x:auto; line-height:1.7; font-size:14px; }
+  .chat-panel.full { grid-column:1 / -1; }
+
+  /* Rendered Markdown inside panels */
+  .chat-panel-body h1 { font-size:20px; font-weight:700; margin:16px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--border); color:#f1f5f9; }
+  .chat-panel-body h1:first-child { margin-top:0; }
+  .chat-panel-body h2 { font-size:17px; font-weight:700; margin:14px 0 8px; color:#f1f5f9; }
+  .chat-panel-body h3 { font-size:15px; font-weight:600; margin:12px 0 6px; color:#e2e8f0; }
+  .chat-panel-body h4 { font-size:13px; font-weight:600; margin:10px 0 4px; color:#cbd5e1; }
+  .chat-panel-body p { margin:0 0 10px; }
+  .chat-panel-body p:last-child { margin-bottom:0; }
+  .chat-panel-body ul, .chat-panel-body ol { margin:0 0 10px; padding-left:22px; }
+  .chat-panel-body li { margin-bottom:4px; }
+  .chat-panel-body li::marker { color:var(--accent); }
+  .chat-panel-body strong { color:#f1f5f9; font-weight:700; }
+  .chat-panel-body em { color:#cbd5e1; font-style:italic; }
+  .chat-panel-body a { color:var(--accent); text-decoration:none; border-bottom:1px solid rgba(59,130,246,0.3); }
+  .chat-panel-body a:hover { border-bottom-color:var(--accent); }
+  .chat-panel-body code { background:rgba(59,130,246,0.1); color:#93c5fd; padding:2px 6px; border-radius:4px; font-family:'Cascadia Code','Fira Code',monospace; font-size:12px; }
+  .chat-panel-body pre { background:#0d1117; border:1px solid var(--border); border-radius:8px; padding:14px; margin:10px 0; overflow-x:auto; }
+  .chat-panel-body pre code { background:none; color:#e2e8f0; padding:0; font-size:12px; }
+  .chat-panel-body blockquote { border-left:3px solid var(--accent); padding:6px 14px; margin:10px 0; background:rgba(59,130,246,0.05); border-radius:0 6px 6px 0; color:#94a3b8; }
+  .chat-panel-body blockquote p { margin-bottom:0; }
+  .chat-panel-body hr { border:none; border-top:1px solid var(--border); margin:12px 0; }
+  .chat-panel-body table { width:100%; border-collapse:collapse; margin:10px 0; font-size:12px; }
+  .chat-panel-body th { text-align:left; padding:6px 10px; background:rgba(59,130,246,0.1); border:1px solid var(--border); color:#f1f5f9; font-weight:600; }
+  .chat-panel-body td { padding:6px 10px; border:1px solid var(--border); }
+  .chat-panel-body tr:nth-child(even) { background:rgba(30,41,59,0.3); }
+
+  /* Tabs */
+  .tabs { display:flex; gap:4px; margin-bottom:16px; }
+  .tab { padding:8px 16px; border-radius:8px; font-size:13px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); }
+  .tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:#334155; }
+
+  @media (max-width:900px) {
+    .kpi-strip { grid-template-columns:repeat(3,1fr); }
+    .grid { grid-template-columns:1fr; }
+    .grid.three { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1><span>&#9889;</span> BarqAdl <span>Dashboard</span></h1>
+    <div class="subtitle">Self-Improving Multi-Agent Legal AI for UAE Law</div>
+  </div>
+  <div class="live-badge">LIVE</div>
+</div>
+
+<!-- KPI Strip -->
+<div class="kpi-strip" id="kpiStrip">
+  <div class="kpi blue"><div class="label">Total Queries</div><div class="value" id="kpiQueries">-</div></div>
+  <div class="kpi green"><div class="label">Avg Score</div><div class="value" id="kpiAvgScore">-</div><div class="delta up" id="kpiDelta"></div></div>
+  <div class="kpi yellow"><div class="label">Retry Rate</div><div class="value" id="kpiRetryRate">-</div></div>
+  <div class="kpi purple"><div class="label">Active Agents</div><div class="value" id="kpiAgents">-</div></div>
+  <div class="kpi red"><div class="label">Pass Rate</div><div class="value" id="kpiPassRate">-</div></div>
+</div>
+
+<!-- Architecture Diagram -->
+<div style="padding:0 32px 16px;">
+  <div class="card full-width">
+    <h2><span class="icon">&#128736;</span> Self-Improvement Pipeline Architecture</h2>
+    <div class="arch-flow">
+      <div class="arch-node"><div class="name">Orchestrator</div><div class="model">Claude Haiku</div></div>
+      <div class="arch-arrow">&#8594;</div>
+      <div class="arch-node"><div class="name">Skill Scraper</div><div class="model">Claude Sonnet</div></div>
+      <div class="arch-arrow">&#8594;</div>
+      <div class="arch-node"><div class="name">Sub-Agent</div><div class="model">Claude Sonnet 3.5</div></div>
+      <div class="arch-arrow">&#8594;</div>
+      <div>
+        <div class="arch-loop-label">&#8635; Self-improvement loop</div>
+        <div class="arch-loop">
+          <div class="arch-node judge"><div class="name">Judge</div><div class="model">Claude Sonnet</div></div>
+          <div class="arch-arrow">&#8594;</div>
+          <div class="arch-node"><div class="name">Retry + Learn</div><div class="model">if score &lt; 32/40</div></div>
+        </div>
+      </div>
+      <div class="arch-arrow">&#8594;</div>
+      <div class="arch-node"><div class="name">Formatter</div><div class="model">Claude Haiku</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Row -->
+<div class="grid">
+  <div class="card">
+    <h2><span class="icon">&#128200;</span> Score Improvement Over Time</h2>
+    <div class="chart-container"><canvas id="scoreChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h2><span class="icon">&#127919;</span> Domain Performance</h2>
+    <div class="chart-container"><canvas id="domainChart"></canvas></div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h2><span class="icon">&#128202;</span> Score Distribution (4 Dimensions)</h2>
+    <div class="chart-container"><canvas id="radarChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h2><span class="icon">&#9200;</span> Response Time Trend</h2>
+    <div class="chart-container"><canvas id="responseTimeChart"></canvas></div>
+  </div>
+</div>
+
+<!-- Strategy + Agents Row -->
+<div class="grid">
+  <div class="card">
+    <h2><span class="icon">&#129504;</span> Strategy Evolution</h2>
+    <div class="tabs" id="strategyTabs"></div>
+    <div class="timeline" id="strategyTimeline"></div>
+  </div>
+  <div class="card">
+    <h2><span class="icon">&#129302;</span> Active Agents</h2>
+    <div id="agentsList"></div>
+  </div>
+</div>
+
+<!-- Live Chat Test -->
+<div style="padding:0 32px 16px;">
+  <div class="card full-width">
+    <h2><span class="icon">&#128172;</span> Live Chat Test</h2>
+    <div class="chat-box">
+      <input type="text" id="chatInput" placeholder="Ask a UAE legal question..." value="My employer hasn't paid me for 2 months. What can I do?">
+      <button id="chatSend" onclick="sendChat()">Send</button>
+    </div>
+    <div class="progress-log" id="progressLog" style="display:none;"></div>
+
+    <!-- Structured Result -->
+    <div class="chat-result" id="chatResult">
+      <div class="chat-result-header" id="chatResultHeader"></div>
+      <div class="score-breakdown" id="scoreBreakdown"></div>
+      <div class="chat-panels" id="chatPanels"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Query Log -->
+<div style="padding:0 32px 24px;">
+  <div class="card full-width">
+    <h2><span class="icon">&#128203;</span> Query History</h2>
+    <div style="overflow-x:auto;">
+      <table class="log-table" id="queryLog">
+        <thead>
+          <tr><th>Query</th><th>Domain</th><th>Score</th><th>Status</th><th>Retries</th><th>Time</th><th>When</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center; padding:24px; color:var(--muted); font-size:12px;">
+  &#9889; BarqAdl — Justice at the speed of light | Powered by AWS Bedrock
+</div>
+
+<script>
+// Configure marked for beautiful markdown rendering
+marked.setOptions({
+  highlight: function(code, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      return hljs.highlight(code, { language: lang }).value;
+    }
+    return code;
+  },
+  breaks: true,
+  gfm: true,
+});
+
+const API = window.location.origin;
+let metricsData = null;
+let agentsData = null;
+let improvementLog = [];
+
+// Fetch all data
+async function fetchData() {
+  try {
+    const [metricsRes, agentsRes] = await Promise.all([
+      fetch(API + '/api/metrics').then(r => r.json()),
+      fetch(API + '/api/agents').then(r => r.json()),
+    ]);
+    metricsData = metricsRes;
+    agentsData = agentsRes;
+
+    // Get raw improvement log for charts
+    const logRes = await fetch(API + '/api/improvement-log').then(r => r.json()).catch(() => []);
+    improvementLog = logRes;
+
+    renderKPIs();
+    renderCharts();
+    renderStrategy();
+    renderAgents();
+    renderQueryLog();
+  } catch (e) {
+    console.error('Failed to fetch data:', e);
+  }
+}
+
+function renderKPIs() {
+  const m = metricsData;
+  document.getElementById('kpiQueries').textContent = m.totalQueries;
+  document.getElementById('kpiRetryRate').textContent = m.retryRate;
+  document.getElementById('kpiAgents').textContent = agentsData.totalAgents;
+
+  const recent = m.scoreImprovement.recentAvg;
+  const early = m.scoreImprovement.earlyAvg;
+  document.getElementById('kpiAvgScore').textContent = recent + '/40';
+  const delta = m.scoreImprovement.delta;
+  const deltaEl = document.getElementById('kpiDelta');
+  deltaEl.textContent = (delta >= 0 ? '+' : '') + delta + ' vs early';
+  deltaEl.className = 'delta ' + (delta >= 0 ? 'up' : 'down');
+
+  // Pass rate
+  const passCount = improvementLog.filter(e => e.pass).length;
+  const passRate = improvementLog.length > 0 ? Math.round(passCount / improvementLog.length * 100) : 0;
+  document.getElementById('kpiPassRate').textContent = passRate + '%';
+}
+
+let charts = {};
+function renderCharts() {
+  // Score over time
+  if (charts.score) charts.score.destroy();
+  const scores = improvementLog.map(e => e.totalScore);
+  const labels = improvementLog.map((_, i) => 'Q' + (i + 1));
+  charts.score = new Chart(document.getElementById('scoreChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Total Score',
+        data: scores,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4,
+        pointBackgroundColor: scores.map(s => s >= 32 ? '#10b981' : '#ef4444'),
+      }, {
+        label: 'Pass Threshold (32)',
+        data: scores.map(() => 32),
+        borderColor: 'rgba(245,158,11,0.4)',
+        borderDash: [6, 4],
+        pointRadius: 0,
+        fill: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { min: 20, max: 40, grid: { color: 'rgba(30,41,59,0.5)' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } },
+      plugins: { legend: { labels: { color: '#94a3b8' } } },
+    }
+  });
+
+  // Domain performance bar chart
+  if (charts.domain) charts.domain.destroy();
+  const domains = Object.keys(metricsData.domainStats);
+  charts.domain = new Chart(document.getElementById('domainChart'), {
+    type: 'bar',
+    data: {
+      labels: domains.map(d => d.charAt(0).toUpperCase() + d.slice(1)),
+      datasets: [{
+        label: 'Avg Score',
+        data: domains.map(d => parseFloat(metricsData.domainStats[d].avgScore)),
+        backgroundColor: ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b'],
+        borderRadius: 6,
+      }, {
+        label: 'Queries',
+        data: domains.map(d => metricsData.domainStats[d].queries),
+        backgroundColor: ['rgba(59,130,246,0.3)', 'rgba(139,92,246,0.3)', 'rgba(16,185,129,0.3)', 'rgba(245,158,11,0.3)'],
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { grid: { color: 'rgba(30,41,59,0.5)' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } },
+      plugins: { legend: { labels: { color: '#94a3b8' } } },
+    }
+  });
+
+  // Radar chart - average scores across 4 dimensions
+  if (charts.radar) charts.radar.destroy();
+  const dimAvgs = { legal_accuracy: 0, completeness: 0, actionability: 0, citation_quality: 0 };
+  improvementLog.forEach(e => {
+    if (e.scores) {
+      dimAvgs.legal_accuracy += e.scores.legal_accuracy || 0;
+      dimAvgs.completeness += e.scores.completeness || 0;
+      dimAvgs.actionability += e.scores.actionability || 0;
+      dimAvgs.citation_quality += e.scores.citation_quality || 0;
+    }
+  });
+  const n = improvementLog.length || 1;
+  // Early vs Recent
+  const early5 = improvementLog.slice(0, 5);
+  const recent5 = improvementLog.slice(-5);
+  const avgDim = (arr, dim) => arr.length ? arr.reduce((a, e) => a + (e.scores?.[dim] || 0), 0) / arr.length : 0;
+
+  charts.radar = new Chart(document.getElementById('radarChart'), {
+    type: 'radar',
+    data: {
+      labels: ['Legal Accuracy', 'Completeness', 'Actionability', 'Citation Quality'],
+      datasets: [{
+        label: 'Recent (last 5)',
+        data: ['legal_accuracy', 'completeness', 'actionability', 'citation_quality'].map(d => avgDim(recent5, d).toFixed(1)),
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16,185,129,0.15)',
+      }, {
+        label: 'Early (first 5)',
+        data: ['legal_accuracy', 'completeness', 'actionability', 'citation_quality'].map(d => avgDim(early5, d).toFixed(1)),
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239,68,68,0.1)',
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { r: { min: 5, max: 10, grid: { color: 'rgba(30,41,59,0.5)' }, angleLines: { color: 'rgba(30,41,59,0.5)' }, pointLabels: { color: '#94a3b8' }, ticks: { color: '#94a3b8', backdropColor: 'transparent' } } },
+      plugins: { legend: { labels: { color: '#94a3b8' } } },
+    }
+  });
+
+  // Response time trend
+  if (charts.responseTime) charts.responseTime.destroy();
+  charts.responseTime = new Chart(document.getElementById('responseTimeChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Response Time (s)',
+        data: improvementLog.map(e => (e.responseTime / 1000).toFixed(1)),
+        borderColor: '#8b5cf6',
+        backgroundColor: 'rgba(139,92,246,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { grid: { color: 'rgba(30,41,59,0.5)' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } },
+      plugins: { legend: { labels: { color: '#94a3b8' } } },
+    }
+  });
+}
+
+function renderStrategy() {
+  const strategies = metricsData.strategies;
+  const domains = Object.keys(strategies);
+  const tabsEl = document.getElementById('strategyTabs');
+  const timelineEl = document.getElementById('strategyTimeline');
+
+  tabsEl.innerHTML = '';
+  domains.forEach((d, i) => {
+    const tab = document.createElement('div');
+    tab.className = 'tab' + (i === 0 ? ' active' : '');
+    tab.textContent = d.charAt(0).toUpperCase() + d.slice(1);
+    tab.onclick = () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      showStrategy(d);
+    };
+    tabsEl.appendChild(tab);
+  });
+
+  showStrategy(domains[0]);
+
+  function showStrategy(domain) {
+    const strat = strategies[domain];
+    if (!strat || !strat.versions) { timelineEl.innerHTML = '<p style="color:var(--muted)">No strategy data</p>'; return; }
+
+    timelineEl.innerHTML = '';
+    strat.versions.forEach((v, i) => {
+      const isActive = v.version === strat.active;
+      const item = document.createElement('div');
+      item.className = 'timeline-item' + (isActive ? ' active' : '');
+      item.innerHTML = `
+        <div class="version">${v.version} ${isActive ? '(active)' : ''}</div>
+        <div class="score">Avg: ${v.avgScore}/40 | ${v.queryCount} queries</div>
+        ${v.enhancements.length ? '<ul class="enhancements">' + v.enhancements.map(e => '<li>' + e + '</li>').join('') + '</ul>' : '<div style="font-size:12px;color:var(--muted)">Base strategy</div>'}
+      `;
+      timelineEl.appendChild(item);
+    });
+  }
+}
+
+function renderAgents() {
+  const el = document.getElementById('agentsList');
+  el.innerHTML = '';
+  agentsData.agents.forEach(a => {
+    const card = document.createElement('div');
+    card.className = 'agent-card';
+    card.innerHTML = `
+      <div class="agent-header">
+        <span class="domain">${a.domain}</span>
+        <span class="status">${a.status || 'active'}</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num">${a.skillCount}</div><div class="lbl">Skills</div></div>
+        <div class="stat"><div class="num">${a.avgScore}</div><div class="lbl">Avg Score</div></div>
+        <div class="stat"><div class="num">${a.queryCount}</div><div class="lbl">Queries</div></div>
+      </div>
+    `;
+    el.appendChild(card);
+  });
+}
+
+function renderQueryLog() {
+  const tbody = document.querySelector('#queryLog tbody');
+  tbody.innerHTML = '';
+  [...improvementLog].reverse().forEach(e => {
+    const tr = document.createElement('tr');
+    const time = e.timestamp ? new Date(e.timestamp).toLocaleTimeString() : '-';
+    tr.innerHTML = `
+      <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${e.query}">${e.query}</td>
+      <td><span class="badge domain">${e.domain}</span></td>
+      <td><strong>${e.totalScore}</strong>/40</td>
+      <td><span class="badge ${e.pass ? 'pass' : 'fail'}">${e.pass ? 'PASS' : 'FAIL'}</span></td>
+      <td>${e.retried ? '<span class="badge retry">' + e.retryCount + 'x</span>' : '-'}</td>
+      <td>${(e.responseTime / 1000).toFixed(1)}s</td>
+      <td style="color:var(--muted)">${time}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Live Chat
+function dimColor(score, max) {
+  const pct = score / max;
+  if (pct >= 0.9) return '#10b981';
+  if (pct >= 0.7) return '#3b82f6';
+  if (pct >= 0.5) return '#f59e0b';
+  return '#ef4444';
+}
+
+function renderChatResult(result) {
+  const container = document.getElementById('chatResult');
+  const header = document.getElementById('chatResultHeader');
+  const breakdown = document.getElementById('scoreBreakdown');
+  const panels = document.getElementById('chatPanels');
+
+  const ev = result.evaluation;
+  const cl = result.classification;
+  const scores = ev.scores;
+
+  // Header pills
+  header.innerHTML = `
+    <span class="score-pill ${ev.pass ? 'pass' : 'fail'}">${ev.pass ? 'PASS' : 'FAIL'} ${scores.total}/40</span>
+    ${cl.domains.map(d => '<span class="meta-pill domain">' + d.charAt(0).toUpperCase() + d.slice(1) + '</span>').join('')}
+    <span class="meta-pill ${cl.urgency === 'high' ? 'urgency-high' : ''}">${cl.urgency} urgency</span>
+    <span class="meta-pill">${cl.complexity}</span>
+    ${ev.retried ? '<span class="meta-pill retry">' + ev.retryCount + ' retries</span>' : ''}
+  `;
+
+  // Score breakdown dimensions
+  const dims = [
+    { key: 'legal_accuracy', label: 'Legal Accuracy', max: 10 },
+    { key: 'completeness', label: 'Completeness', max: 10 },
+    { key: 'actionability', label: 'Actionability', max: 10 },
+    { key: 'citation_quality', label: 'Citations', max: 10 },
+  ];
+  breakdown.innerHTML = dims.map(d => {
+    const val = scores[d.key] || 0;
+    const pct = (val / d.max * 100).toFixed(0);
+    const color = dimColor(val, d.max);
+    return `<div class="score-dim">
+      <div class="dim-label">${d.label}</div>
+      <div class="dim-value" style="color:${color}">${val}<span style="font-size:12px;color:var(--muted)">/${d.max}</span></div>
+      <div class="dim-bar"><div class="dim-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+    </div>`;
+  }).join('');
+
+  // Split response into sections by h2/h3 headings
+  const responseText = result.response;
+  const sections = splitMarkdownSections(responseText);
+
+  // Build panels
+  const panelColors = ['blue', 'green', 'purple', 'yellow', 'blue', 'green', 'purple', 'yellow'];
+  let panelHTML = '';
+
+  if (sections.length <= 1) {
+    // Single panel for short responses
+    panelHTML = `<div class="chat-panel full">
+      <div class="chat-panel-header blue">Response</div>
+      <div class="chat-panel-body">${DOMPurify.sanitize(marked.parse(responseText))}</div>
+    </div>`;
+  } else {
+    sections.forEach((sec, i) => {
+      const isLast = i === sections.length - 1;
+      const isDisclaimer = sec.body.includes('BarqAdl') && sec.body.includes('legal advice') && isLast;
+      if (isDisclaimer) {
+        panelHTML += `<div class="chat-panel full">
+          <div class="chat-panel-header yellow">Disclaimer</div>
+          <div class="chat-panel-body">${DOMPurify.sanitize(marked.parse(sec.body))}</div>
+        </div>`;
+      } else {
+        const color = panelColors[i % panelColors.length];
+        panelHTML += `<div class="chat-panel">
+          <div class="chat-panel-header ${color}">${DOMPurify.sanitize(sec.title || 'Section ' + (i + 1))}</div>
+          <div class="chat-panel-body">${DOMPurify.sanitize(marked.parse(sec.body))}</div>
+        </div>`;
+      }
+    });
+  }
+
+  panels.innerHTML = panelHTML;
+  container.style.display = 'block';
+}
+
+function splitMarkdownSections(md) {
+  const lines = md.split('\n');
+  const sections = [];
+  let current = null;
+
+  for (const line of lines) {
+    const h2Match = line.match(/^##\s+(.+)/);
+    const h3Match = !h2Match && line.match(/^###\s+(.+)/);
+    const heading = h2Match || h3Match;
+
+    if (heading) {
+      if (current) sections.push(current);
+      current = { title: heading[1].replace(/[#*_]/g, '').trim(), body: '' };
+    } else {
+      if (!current) current = { title: '', body: '' };
+      current.body += line + '\n';
+    }
+  }
+  if (current && current.body.trim()) sections.push(current);
+  return sections;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const btn = document.getElementById('chatSend');
+  const log = document.getElementById('progressLog');
+  const resultContainer = document.getElementById('chatResult');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+  log.style.display = 'block';
+  resultContainer.style.display = 'none';
+  log.innerHTML = '';
+
+  try {
+    const res = await fetch(API + '/api/chat/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg }),
+    });
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let finalResult = null;
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6);
+          if (data === '{}') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.stage === 'done') {
+              finalResult = parsed.result;
+            } else if (parsed.stage) {
+              const step = document.createElement('div');
+              step.className = 'step';
+              const isDone = parsed.stage.includes('classified') || parsed.stage.includes('generated') || parsed.stage.includes('judged') || parsed.stage.includes('formatted') || parsed.stage.includes('agents_ready') || parsed.stage.includes('skills_loaded');
+              step.innerHTML = '<div class="dot ' + (isDone ? 'done' : 'active') + '"></div><span>' + parsed.message + '</span>';
+              log.appendChild(step);
+              log.scrollTop = log.scrollHeight;
+            }
+          } catch {}
+        }
+      }
+    }
+
+    if (finalResult) {
+      renderChatResult(finalResult);
+      setTimeout(fetchData, 500);
+    }
+  } catch (e) {
+    resultContainer.style.display = 'block';
+    document.getElementById('chatPanels').innerHTML = '<div class="chat-panel full"><div class="chat-panel-header" style="background:rgba(239,68,68,0.1);color:var(--red);">Error</div><div class="chat-panel-body"><p>' + e.message + '</p></div></div>';
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Send';
+}
+
+// Enter key
+document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+
+// Init
+fetchData();
+// Auto-refresh every 30s
+setInterval(fetchData, 30000);
+</script>
+</body>
+</html>

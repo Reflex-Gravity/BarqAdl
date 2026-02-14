@@ -1,9 +1,11 @@
 require('dotenv').config();
 
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const { errorHandler } = require('./middleware/errorHandler');
 const { shutdownLangfuse } = require('./config/langfuse');
+const { readJSON } = require('./config/db');
 
 const chatRoutes = require('./routes/chat');
 const agentRoutes = require('./routes/agents');
@@ -32,20 +34,30 @@ app.use('/api/feedback', feedbackRoutes);
 // OpenAI-compatible endpoint for LibreChat
 app.use('/v1', openaiRoutes);
 
+// Raw improvement log for dashboard charts
+app.get('/api/improvement-log', (req, res) => {
+  res.json(readJSON('improvement-log.json') || []);
+});
+
+// Serve dashboard UI
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
 // Error handler
 app.use(errorHandler);
 
-const server = app.listen(PORT, () => {
-  console.log(`\n⚡ BarqAdl — Justice at the speed of light`);
-  console.log(`  Server running on http://localhost:${PORT}`);
-  console.log(`  Environment: ${process.env.NODE_ENV || 'development'}\n`);
-});
+// Only start listening when running directly (not in Lambda)
+if (!process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  const server = app.listen(PORT, () => {
+    console.log(`\n⚡ BarqAdl — Justice at the speed of light`);
+    console.log(`  Server running on http://localhost:${PORT}`);
+    console.log(`  Environment: ${process.env.NODE_ENV || 'development'}\n`);
+  });
 
-// Graceful shutdown
-process.on('SIGTERM', async () => {
-  console.log('Shutting down...');
-  await shutdownLangfuse();
-  server.close();
-});
+  process.on('SIGTERM', async () => {
+    console.log('Shutting down...');
+    await shutdownLangfuse();
+    server.close();
+  });
+}
 
 module.exports = app;
