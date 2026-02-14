@@ -8,6 +8,7 @@ const { shutdownLangfuse } = require('./config/langfuse');
 const chatRoutes = require('./routes/chat');
 const agentRoutes = require('./routes/agents');
 const metricsRoutes = require('./routes/metrics');
+const feedbackRoutes = require('./routes/feedback');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -25,6 +26,7 @@ app.get('/health', (req, res) => {
 app.use('/api/chat', chatRoutes);
 app.use('/api/agents', agentRoutes);
 app.use('/api/metrics', metricsRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 // Error handler
 app.use(errorHandler);

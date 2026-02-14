@@ -1,6 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
-const { invokeModel } = require('../config/bedrock');
+const { invokeModel, MODELS } = require('../config/bedrock');
 const { loadPrompt } = require('../utils/promptLoader');
 const { readJSON, writeJSON } = require('../config/db');
 const { safeJsonParse } = require('../utils/helpers');
@@ -124,7 +124,7 @@ const equip = async (domain, trace) => {
     try {
       const raw = await invokeModel(SCRAPER_PROMPT,
         `Domain: ${domain}\n\nRaw content:\n${rawContent.join('\n---\n')}\n\nExtract and structure skills.`,
-        { temperature: 0.2, maxTokens: 4096 }
+        { model: MODELS.scraper, temperature: 0.2, maxTokens: 4096 }
       );
       skills = safeJsonParse(raw);
     } catch (e) {

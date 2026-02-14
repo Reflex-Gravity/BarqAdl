@@ -1,4 +1,4 @@
-const { invokeModel } = require('../config/bedrock');
+const { invokeModel, MODELS } = require('../config/bedrock');
 const { loadPrompt } = require('../utils/promptLoader');
 
 const FORMATTER_PROMPT = loadPrompt('response-formatter');
@@ -26,6 +26,7 @@ Format this for display.`;
 
   try {
     const formatted = await invokeModel(FORMATTER_PROMPT, userContent, {
+      model: MODELS.light,
       temperature: 0.2,
       maxTokens: 4096,
     });

@@ -1,4 +1,4 @@
-const { invokeModel } = require('../config/bedrock');
+const { invokeModel, MODELS } = require('../config/bedrock');
 const { loadPrompt } = require('../utils/promptLoader');
 const { safeJsonParse } = require('../utils/helpers');
 
@@ -20,6 +20,7 @@ Evaluate this response.`;
 
   try {
     const raw = await invokeModel(JUDGE_PROMPT, userContent, {
+      model: MODELS.judge,
       temperature: 0.2,
       maxTokens: 2000,
     });

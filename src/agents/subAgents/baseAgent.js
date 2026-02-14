@@ -1,4 +1,4 @@
-const { invokeModel } = require('../../config/bedrock');
+const { invokeModel, MODELS } = require('../../config/bedrock');
 const { loadPrompt } = require('../../utils/promptLoader');
 const { readJSON } = require('../../config/db');
 const { getStrategyStore } = require('../../registry/strategyStore');
@@ -59,6 +59,7 @@ class BaseAgent {
 
     try {
       const response = await invokeModel(fullPrompt, userContent, {
+        model: MODELS.heavy,
         temperature: 0.3,
         maxTokens: 4096,
       });
@@ -81,6 +82,7 @@ class BaseAgent {
 
     try {
       const response = await invokeModel(fullPrompt, userContent, {
+        model: MODELS.heavy,
         temperature: 0.2,
         maxTokens: 4096,
       });

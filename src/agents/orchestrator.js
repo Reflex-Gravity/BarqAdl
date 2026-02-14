@@ -1,4 +1,4 @@
-const { invokeModel } = require('../config/bedrock');
+const { invokeModel, MODELS } = require('../config/bedrock');
 const { loadPrompt } = require('../utils/promptLoader');
 const { safeJsonParse } = require('../utils/helpers');
 
@@ -9,6 +9,7 @@ const classify = async (userMessage, trace) => {
 
   try {
     const raw = await invokeModel(SYSTEM_PROMPT, userMessage, {
+      model: MODELS.orchestrator,
       temperature: 0.1,
       maxTokens: 1000,
     });
