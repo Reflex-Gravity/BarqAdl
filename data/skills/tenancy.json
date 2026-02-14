@@ -1,0 +1,112 @@
+{
+  "domain": "tenancy",
+  "skills_found": 5,
+  "skills": [
+    {
+      "skill_id": "tenancy_dispute_001",
+      "domain": "tenancy",
+      "topic": "rental_dispute",
+      "title": "RERA Rental Dispute Process",
+      "content": "Rental disputes in Dubai are handled by the Rental Dispute Settlement Centre (RDSC) under Dubai Land Department. Filing fee is 3.5% of annual rent (minimum AED 500, maximum AED 20,000). Cases can be filed online through DLD website or in person at RDSC offices. Process: file case → pay fee → first hearing (usually within 15 days) → judgment.",
+      "law_references": [
+        { "law": "Law No. 26 of 2007", "articles": ["4", "25", "26"] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Attempt direct resolution with landlord (document all communication)",
+        "Step 2: File case at RDSC (online or in person)",
+        "Step 3: Pay filing fee (3.5% of annual rent, min AED 500)",
+        "Step 4: Attend hearing (scheduled within 15 days)",
+        "Step 5: Receive judgment (typically within 30 days of filing)"
+      ],
+      "authorities": ["RERA", "RDSC", "Dubai Land Department"],
+      "timelines": { "first_hearing": "15 days", "judgment": "30 days typical" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "tenancy_eviction_002",
+      "domain": "tenancy",
+      "topic": "eviction_rules",
+      "title": "Dubai Eviction Rules",
+      "content": "Landlord can only evict for legally specified reasons under Law No. 26/2007 as amended: Personal use (12 months written notice via notary public), Demolition/major renovation (12 months notice + municipality approval), Sale of property (12 months notice), Non-payment of rent (30 days notice after non-payment), Illegal use (immediate grounds), Lease expiry without renewal (90 days notice before expiry). ALL eviction notices must be served via notary public or registered mail.",
+      "law_references": [
+        { "law": "Law No. 26 of 2007", "articles": ["25", "26"] },
+        { "law": "Law No. 33 of 2008", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Verify if eviction notice was served properly (notary or registered mail)",
+        "Step 2: Check if reason is legally valid under Articles 25-26",
+        "Step 3: Verify correct notice period was given",
+        "Step 4: If invalid, file dispute at RDSC",
+        "Step 5: Request stay of eviction if needed (RDSC can grant)"
+      ],
+      "authorities": ["RDSC", "RERA", "Dubai Land Department"],
+      "timelines": { "personal_use_notice": "12 months", "non_payment_notice": "30 days", "lease_expiry_notice": "90 days" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "tenancy_rent_increase_003",
+      "domain": "tenancy",
+      "topic": "rent_increase",
+      "title": "RERA Rent Increase Calculator Rules",
+      "content": "Rent increases in Dubai are strictly governed by the RERA Rent Index (Decree No. 43/2013). Maximum allowed increase depends on how far below the RERA index your current rent is: 0% if up to 10% below index. 5% max if 11-20% below. 10% max if 21-30% below. 15% max if 31-40% below. 20% max if more than 40% below. Landlord must give 90 days written notice. Check the RERA Rent Calculator at rera.gov.ae/rental-increase.",
+      "law_references": [
+        { "law": "Decree No. 43 of 2013", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Check your rent vs RERA index at rera.gov.ae/rental-increase",
+        "Step 2: Calculate maximum allowed increase per the brackets",
+        "Step 3: If landlord demands more, refuse in writing citing Decree 43/2013",
+        "Step 4: If landlord insists, file dispute at RDSC"
+      ],
+      "authorities": ["RERA"],
+      "timelines": { "notice_required": "90 days before renewal" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "tenancy_deposit_004",
+      "domain": "tenancy",
+      "topic": "security_deposit",
+      "title": "Security Deposit Rules Dubai",
+      "content": "Standard security deposit: 5% of annual rent for unfurnished properties, 10% for furnished. Must be returned within reasonable time after lease end (typically 30 days). Landlord can only deduct for documented damage beyond normal wear and tear. If landlord refuses to return, tenant can file at RDSC.",
+      "law_references": [
+        { "law": "Law No. 26 of 2007", "articles": ["20"] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Document property condition at move-in (photos/video)",
+        "Step 2: At move-out, conduct joint inspection with landlord",
+        "Step 3: Request deposit return in writing",
+        "Step 4: If refused, file case at RDSC"
+      ],
+      "authorities": ["RDSC", "RERA"],
+      "timelines": { "return_deadline": "30 days after vacating" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "tenancy_ejari_005",
+      "domain": "tenancy",
+      "topic": "ejari_registration",
+      "title": "Ejari Registration System",
+      "content": "All Dubai tenancy contracts MUST be registered in Ejari (mandatory since 2010). Required for: DEWA connection, visa processing, filing disputes at RDSC, legal standing in any tenancy matter. Registration fee: ~AED 220. Documents needed: passport, visa, Emirates ID, signed contract, previous Ejari (if renewal), DEWA bill. Can register at Ejari typing centers or online.",
+      "law_references": [
+        { "law": "Law No. 26 of 2007", "articles": [] },
+        { "law": "Dubai Land Department Circular 2010", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Gather documents (passport, visa, Emirates ID, contract, DEWA)",
+        "Step 2: Visit Ejari typing center or register online",
+        "Step 3: Pay fee (~AED 220)",
+        "Step 4: Receive Ejari certificate"
+      ],
+      "authorities": ["Ejari", "Dubai Land Department"],
+      "timelines": { "registration_time": "same day" },
+      "confidence": "high"
+    }
+  ],
+  "sources_accessed": ["rera.gov.ae", "dubailand.gov.ae"],
+  "scrape_timestamp": "2026-02-14T10:00:00Z"
+}

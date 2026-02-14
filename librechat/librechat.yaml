@@ -1,0 +1,17 @@
+version: 1.0.0
+cache: true
+
+endpoints:
+  custom:
+    - name: "BarqAdl"
+      apiKey: "barqadl-key"
+      baseURL: "http://localhost:3001/api"
+      models:
+        default: ["barqadl-legal-ai"]
+        fetch: false
+      titleConvo: true
+      titleModel: "barqadl-legal-ai"
+      summarize: false
+      dropParams: ["stop", "user", "frequency_penalty", "presence_penalty"]
+      modelDisplayLabel: "BarqAdl Legal AI"
+      iconURL: "https://raw.githubusercontent.com/your-repo/barqadl/main/docs/logo.png"

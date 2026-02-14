@@ -1,0 +1,116 @@
+{
+  "domain": "visa",
+  "skills_found": 5,
+  "skills": [
+    {
+      "skill_id": "visa_work_permit_001",
+      "domain": "visa",
+      "topic": "work_permit",
+      "title": "UAE Work Permit & Employment Visa Process",
+      "content": "Employer applies through MOHRE Tasheel centers or online. Process: employer gets initial approval → applies for entry permit → employee enters UAE → medical fitness test → Emirates ID application (ICA) → work permit issuance + residence visa stamping (GDRFA). Total processing: 2-4 weeks. Employee cannot work until work permit is issued.",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 29 of 2020", "articles": [] },
+        { "law": "Cabinet Resolution No. 65 of 2022", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Employer submits work permit application to MOHRE",
+        "Step 2: MOHRE reviews and issues entry permit (2-5 days)",
+        "Step 3: Employee enters UAE on entry permit",
+        "Step 4: Medical fitness test at approved center (1-3 days)",
+        "Step 5: Emirates ID application through ICA (3-7 days)",
+        "Step 6: Visa stamping at GDRFA (3-5 days)"
+      ],
+      "authorities": ["MOHRE", "GDRFA", "ICA"],
+      "timelines": { "entry_permit": "2-5 days", "medical": "1-3 days", "emirates_id": "3-7 days", "visa_stamping": "3-5 days", "total": "2-4 weeks" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "visa_golden_002",
+      "domain": "visa",
+      "topic": "golden_visa",
+      "title": "UAE Golden Visa (10-Year Residence)",
+      "content": "10-year renewable residence visa. Categories: Investors (AED 2M+ in property or deposit or business), Specialized Talent (doctors, engineers, scientists with achievements/publications), Entrepreneurs (AED 500K+ approved project or previous exit), Outstanding Students (3.8+ GPA from UAE universities), Humanitarian Workers. Apply through ICP smart services or GDRFA. No sponsor required, can sponsor family.",
+      "law_references": [
+        { "law": "Cabinet Resolution No. 65 of 2022", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Determine eligibility category",
+        "Step 2: Gather supporting documents (property deeds, certificates, etc.)",
+        "Step 3: Apply through ICP smart services (smartservices.ica.gov.ae) or GDRFA",
+        "Step 4: Attend biometrics appointment if required",
+        "Step 5: Receive golden visa (typically within 30 days)"
+      ],
+      "authorities": ["ICP", "GDRFA"],
+      "timelines": { "processing": "up to 30 days" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "visa_cancellation_003",
+      "domain": "visa",
+      "topic": "visa_cancellation",
+      "title": "Visa Cancellation & Grace Periods",
+      "content": "Employment visa: 30-day grace period after cancellation to find new sponsor or exit. During grace period, person can stay legally. After grace period, overstay fines apply (AED 50/day). Employer-initiated cancellation: employer must settle all dues before cancellation. Employee can block cancellation if there's an active labor complaint. Cancellation process: employer applies through GDRFA, employee must return Emirates ID.",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 29 of 2020", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Employer initiates cancellation through GDRFA",
+        "Step 2: Employee receives 30-day grace period",
+        "Step 3: During grace: find new employer/sponsor OR prepare to exit",
+        "Step 4: Return Emirates ID upon visa cancellation",
+        "Step 5: If changing employers: new employer applies for work permit within grace period"
+      ],
+      "authorities": ["GDRFA", "MOHRE"],
+      "timelines": { "grace_period": "30 days", "overstay_fine": "AED 50/day after grace" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "visa_overstay_004",
+      "domain": "visa",
+      "topic": "overstay_fines",
+      "title": "Overstay Fines & Penalties",
+      "content": "Visit visa: 10-day grace after expiry, then AED 50/day fine. Residence visa: 30-day grace after cancellation, then AED 50/day. Accumulated fines can result in travel ban or detention at exit. Maximum fine is not capped but can be negotiated. Amnesty periods are occasionally offered by UAE government (check latest announcements). Fines must be paid before exit.",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 29 of 2020", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Check visa status on ICA smart services (smartservices.ica.gov.ae)",
+        "Step 2: Calculate accumulated fines",
+        "Step 3: Pay fines at GDRFA office or airport immigration",
+        "Step 4: If fines are very high, check for active amnesty programs",
+        "Step 5: Obtain exit permit if required"
+      ],
+      "authorities": ["GDRFA", "ICA"],
+      "timelines": { "visit_grace": "10 days", "residence_grace": "30 days", "fine_rate": "AED 50/day" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "visa_ban_005",
+      "domain": "visa",
+      "topic": "ban_types",
+      "title": "UAE Immigration & Labor Bans",
+      "content": "Labor ban (MOHRE): Historically 1-year ban for leaving employer before contract end. Largely abolished under new 2021 labor law for most cases — employees can now change jobs with 30-day notice. Immigration ban (GDRFA): Variable duration for immigration violations (overstay, security issues). Absconding ban: When employer reports worker as having absconded (left without notice). Can be contested at MOHRE if employee has evidence of employer violation. Check ban status via MOHRE app or ICA smart services.",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 33 of 2021 (Labor)", "articles": [] },
+        { "law": "Federal Decree-Law No. 29 of 2020 (Immigration)", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Check ban status through MOHRE app or ICA smart services",
+        "Step 2: If labor ban (largely abolished): new employer can request lift",
+        "Step 3: If absconding ban: file counter-complaint at MOHRE with evidence",
+        "Step 4: If immigration ban: consult lawyer, apply for ban lift through GDRFA",
+        "Step 5: Obtain clearance letter once resolved"
+      ],
+      "authorities": ["MOHRE", "GDRFA", "ICA"],
+      "timelines": { "ban_check": "immediate online", "contest_process": "14-30 days" },
+      "confidence": "high"
+    }
+  ],
+  "sources_accessed": ["icp.gov.ae", "gdrfa.gov.ae", "mohre.gov.ae"],
+  "scrape_timestamp": "2026-02-14T10:00:00Z"
+}

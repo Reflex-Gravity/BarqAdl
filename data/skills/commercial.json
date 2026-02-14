@@ -1,0 +1,96 @@
+{
+  "domain": "commercial",
+  "skills_found": 4,
+  "skills": [
+    {
+      "skill_id": "commercial_setup_001",
+      "domain": "commercial",
+      "topic": "business_setup",
+      "title": "Mainland vs Free Zone Business Setup",
+      "content": "Mainland (DED): 100% foreign ownership since 2021 FDI law, can trade anywhere in UAE and internationally, requires local office/Ejari, higher setup cost but more flexibility. Free Zone: 100% foreign ownership always, trade restricted to within free zone + international (no direct UAE mainland trade without distributor), package deals (license + visa + office), lower cost and faster setup but limited scope. Key free zones: DMCC, DIFC, ADGM, JAFZA, DAFZA.",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 32 of 2021 (Commercial Companies)", "articles": [] },
+        { "law": "Federal Decree-Law No. 19 of 2018 (FDI)", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Determine business activity and target market",
+        "Step 2: Choose mainland vs free zone based on needs",
+        "Step 3: Apply for initial approval from relevant authority",
+        "Step 4: Reserve trade name",
+        "Step 5: Prepare MOA/AOA",
+        "Step 6: Obtain external approvals if required",
+        "Step 7: Pay fees and collect trade license"
+      ],
+      "authorities": ["DED", "DMCC", "DIFC", "ADGM", "JAFZA"],
+      "timelines": { "mainland_setup": "2-4 weeks", "freezone_setup": "1-2 weeks" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "commercial_tax_002",
+      "domain": "commercial",
+      "topic": "corporate_tax",
+      "title": "UAE Corporate Tax Regime",
+      "content": "9% corporate tax on profits above AED 375,000 (effective June 2023, Federal Decree-Law No. 47/2022). 0% on profits up to AED 375,000. Free zone entities may qualify for 0% on qualifying income if they meet substance requirements. VAT at 5% since January 2018. Companies must register with Federal Tax Authority (FTA), maintain proper books, file annual returns.",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 47 of 2022 (Corporate Tax)", "articles": [] },
+        { "law": "Federal Decree-Law No. 8 of 2017 (VAT)", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Register for corporate tax with FTA",
+        "Step 2: Maintain proper accounting records",
+        "Step 3: File annual corporate tax return",
+        "Step 4: Pay tax within 9 months of financial year end"
+      ],
+      "authorities": ["Federal Tax Authority (FTA)"],
+      "timelines": { "filing_deadline": "9 months after FY end" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "commercial_license_003",
+      "domain": "commercial",
+      "topic": "trade_license",
+      "title": "DED Trade License Application",
+      "content": "DED trade license types: Commercial (trading), Professional (services), Industrial (manufacturing). Process: choose activity from DED list → get initial approval → choose trade name → prepare MOA → get external approvals (if required) → pay fees → receive license. Approximate costs: AED 15,000-30,000 for initial setup depending on activity.",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 32 of 2021", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Select business activity from DED approved list",
+        "Step 2: Apply for initial approval",
+        "Step 3: Reserve trade name (AED 620)",
+        "Step 4: Submit all documents",
+        "Step 5: Pay license fees (~AED 15,000-30,000)",
+        "Step 6: Collect trade license"
+      ],
+      "authorities": ["DED", "Municipality", "Civil Defense"],
+      "timelines": { "initial_approval": "1-3 days", "full_process": "2-4 weeks" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "commercial_ubo_004",
+      "domain": "commercial",
+      "topic": "compliance",
+      "title": "UBO Disclosure & ESR Requirements",
+      "content": "Ultimate Beneficial Owner (UBO) disclosure required for all UAE entities under Cabinet Resolution No. 58/2020. Must submit within 60 days of incorporation. Economic Substance Regulations (ESR) require entities engaged in relevant activities to demonstrate adequate economic substance in UAE (real office, staff, expenditure). Non-compliance carries heavy penalties.",
+      "law_references": [
+        { "law": "Cabinet Resolution No. 58 of 2020 (UBO)", "articles": [] },
+        { "law": "Cabinet Resolution No. 57 of 2020 (ESR)", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Identify UBOs (25%+ ownership or significant control)",
+        "Step 2: Submit UBO disclosure within 60 days of incorporation",
+        "Step 3: File annual ESR notification",
+        "Step 4: Maintain substance requirements if engaged in relevant activities"
+      ],
+      "authorities": ["Ministry of Economy", "National Assessing Authority"],
+      "timelines": { "ubo_deadline": "60 days after incorporation", "esr_annual": "annually" },
+      "confidence": "medium"
+    }
+  ],
+  "sources_accessed": ["ded.ae", "mof.gov.ae", "tax.gov.ae"],
+  "scrape_timestamp": "2026-02-14T10:00:00Z"
+}

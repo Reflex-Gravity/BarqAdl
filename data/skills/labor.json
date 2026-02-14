@@ -1,0 +1,108 @@
+{
+  "domain": "labor",
+  "skills_found": 5,
+  "skills": [
+    {
+      "skill_id": "labor_complaint_001",
+      "domain": "labor",
+      "topic": "mohre_complaint",
+      "title": "MOHRE Labor Complaint Process",
+      "content": "Employees can file labor complaints through MOHRE app, website (mohre.gov.ae), or by calling 600590000. MOHRE attempts mediation within 14 working days. If mediation fails, case is referred to labor court. To file: go to mohre.gov.ae → Services → Labor Complaints → Submit details with supporting documents.",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 33 of 2021", "articles": ["54", "55"] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: File complaint via MOHRE app or website (mohre.gov.ae)",
+        "Step 2: MOHRE attempts mediation within 14 working days",
+        "Step 3: If mediation fails, case is automatically referred to labor court",
+        "Step 4: Labor court hearing scheduled within 3-4 weeks"
+      ],
+      "authorities": ["MOHRE", "Labor Court"],
+      "timelines": { "mediation": "14 working days", "court_referral": "after mediation fails", "court_hearing": "3-4 weeks after referral" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "labor_wages_002",
+      "domain": "labor",
+      "topic": "unpaid_wages",
+      "title": "Wage Protection System (WPS) & Unpaid Wages",
+      "content": "UAE Wage Protection System (WPS) mandated by Ministerial Resolution No. 43/2022 requires all employers to pay wages through approved banks, exchange houses, or financial institutions registered with the Central Bank. Employers must pay wages on due dates per contract, no later than 10 days after the due date per Article 54. Non-payment is a serious violation that strengthens employee complaints. If employer has 50+ employees and fails to pay for 60+ days, MOHRE can suspend the company's work permit services.",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 33 of 2021", "articles": ["19", "54"] },
+        { "law": "Ministerial Resolution No. 43/2022", "articles": [] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Check if employer is WPS-compliant (wages paid through banking channels)",
+        "Step 2: Document all unpaid wages with bank statements",
+        "Step 3: File complaint with MOHRE referencing WPS violation",
+        "Step 4: WPS non-compliance is strong evidence in your favor"
+      ],
+      "authorities": ["MOHRE", "Central Bank of UAE"],
+      "timelines": { "wps_delay_threshold": "10 days", "suspension_threshold": "60 days" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "labor_gratuity_003",
+      "domain": "labor",
+      "topic": "end_of_service_gratuity",
+      "title": "End-of-Service Gratuity Calculation",
+      "content": "Under Articles 51-53 of Federal Decree-Law No. 33/2021: Less than 1 year of service = no gratuity. 1-5 years = 21 calendar days of BASIC salary per year. Over 5 years = 30 calendar days per year for years beyond 5. Maximum total gratuity = 2 years' total salary. Pro-rated for partial years. Calculated on BASIC salary only (excludes allowances, overtime, commissions unless contractually specified).",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 33 of 2021", "articles": ["51", "52", "53"] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Determine total years of service",
+        "Step 2: Identify basic salary (exclude allowances)",
+        "Step 3: Calculate: (basic/30) × 21 × years (for first 5 years)",
+        "Step 4: Add: (basic/30) × 30 × years (for years beyond 5)",
+        "Step 5: Cap at 2 years total salary"
+      ],
+      "authorities": ["MOHRE", "Labor Court"],
+      "timelines": { "payment_deadline": "14 days after termination" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "labor_termination_004",
+      "domain": "labor",
+      "topic": "termination_rules",
+      "title": "Employment Termination & Notice Periods",
+      "content": "Under the 2021 law (effective Feb 2022), ALL contracts are fixed-term (max 3 years, renewable). Old unlimited contracts were converted by Feb 2023. Notice period: minimum 30 days, maximum 90 days as per contract. Employer must provide written notice. Employee during probation: 14 days notice (if served 1+ month). Immediate termination allowed under Article 44 for gross misconduct (assault, fraud, intoxication, etc.). Article 45 protects workers from retaliatory termination.",
+      "law_references": [
+        { "law": "Federal Decree-Law No. 33 of 2021", "articles": ["42", "43", "44", "45", "46"] }
+      ],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Review employment contract for notice period clause",
+        "Step 2: Verify if termination reason is legally valid",
+        "Step 3: If wrongful termination, calculate compensation (up to 3 months salary per Article 47)",
+        "Step 4: Calculate final settlement: gratuity + unused leave + pending salary + notice period pay"
+      ],
+      "authorities": ["MOHRE"],
+      "timelines": { "notice_min": "30 days", "notice_max": "90 days", "final_settlement": "14 days" },
+      "confidence": "high"
+    },
+    {
+      "skill_id": "labor_legal_aid_005",
+      "domain": "labor",
+      "topic": "legal_aid",
+      "title": "Free Legal Aid Resources for Workers",
+      "content": "Tawafuq Legal Aid Centers provide free legal consultation and representation for low-income workers. Contact: 800-TAWAFUQ. Legal Aid Department at Dubai Courts offers free representation for qualifying individuals. MOHRE complaints are completely free to file. Labor court cases under AED 100,000 are fee-exempt for employees. Pro bono lawyers available through UAE Bar Association referral program.",
+      "law_references": [],
+      "source_type": "government",
+      "procedures": [
+        "Step 1: Contact Tawafuq Legal Aid (800-TAWAFUQ) for free consultation",
+        "Step 2: Visit Legal Aid Department at Dubai Courts for free representation",
+        "Step 3: File free MOHRE complaint for employment disputes",
+        "Step 4: Labor court fees waived for claims under AED 100,000"
+      ],
+      "authorities": ["Tawafuq Legal Aid", "Legal Aid Department", "MOHRE"],
+      "timelines": {},
+      "confidence": "high"
+    }
+  ],
+  "sources_accessed": ["mohre.gov.ae", "moj.gov.ae", "tamm.abudhabi"],
+  "scrape_timestamp": "2026-02-14T10:00:00Z"
+}
