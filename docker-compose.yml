@@ -1,0 +1,76 @@
+services:
+  barqadl:
+    build: .
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - BEDROCK_MODEL_ID=${BEDROCK_MODEL_ID}
+      - BEDROCK_KB_ID=${BEDROCK_KB_ID}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+      - LANGFUSE_BASE_URL=${LANGFUSE_BASE_URL}
+      - S3_BUCKET=${S3_BUCKET}
+      - DYNAMODB_TABLE=${DYNAMODB_TABLE}
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - barqadl-network
+    restart: unless-stopped
+
+  librechat:
+    image: ghcr.io/danny-avila/librechat:latest
+    ports:
+      - "3080:3080"
+    volumes:
+      - ./librechat/librechat.yaml:/app/librechat.yaml
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/LibreChat
+      - REDIS_URI=redis://redis:6379
+      - ALLOW_REGISTRATION=true
+      - ALLOW_SOCIAL_LOGIN=false
+      - CREDS_KEY=${CREDS_KEY:-a]3F!d9$2kP@5mN&8vR#1xL^7qT%0wY}
+      - CREDS_IV=${CREDS_IV:-b2c4e6f8a0d1c3e5}
+      - JWT_SECRET=${JWT_SECRET:-barqadl_jwt_secret_change_me}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-barqadl_jwt_refresh_secret_change_me}
+    depends_on:
+      barqadl:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - barqadl-network
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - barqadl-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - barqadl-network
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+  redis_data:
+
+networks:
+  barqadl-network:
+    driver: bridge

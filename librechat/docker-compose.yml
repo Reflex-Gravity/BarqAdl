@@ -1,3 +1,6 @@
+# DEPRECATED: Use root-level docker-compose.yml instead.
+# This file is kept for reference only.
+
 services:
   librechat:
     image: ghcr.io/danny-avila/librechat:latest

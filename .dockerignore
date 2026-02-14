@@ -1,0 +1,17 @@
+node_modules
+.git
+.env
+.env.*
+!.env.example
+librechat/
+docs/
+.DS_Store
+*.log
+.claude/
+architecture.html
+CLAUDE-CODE-PROMPT.md
+INSTRUCTIONS.md
+README.md
+self-learning-guide.md
+scripts/
+docker-compose.override.yml

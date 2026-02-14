@@ -5,10 +5,10 @@ endpoints:
   custom:
     - name: "BarqAdl"
       apiKey: "barqadl-key"
-      baseURL: "http://host.docker.internal:3001/v1"
+      baseURL: "http://barqadl:3001/v1"
       models:
         default: ["barqadl-legal-ai"]
-        fetch: false
+        fetch: true
       titleConvo: true
       titleModel: "barqadl-legal-ai"
       summarize: false
