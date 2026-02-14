@@ -1,0 +1,25 @@
+services:
+  librechat:
+    image: ghcr.io/danny-avila/librechat:latest
+    ports:
+      - "3080:3080"
+    volumes:
+      - ./librechat.yaml:/app/librechat.yaml
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/LibreChat
+      - ALLOW_REGISTRATION=true
+      - ALLOW_SOCIAL_LOGIN=false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
